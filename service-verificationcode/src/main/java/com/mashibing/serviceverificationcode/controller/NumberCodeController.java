@@ -22,6 +22,7 @@ public class NumberCodeController {
         // 生成验证码
         int mathRandom = (int) ((Math.random() * 9 + 1) * (Math.pow(10, size - 1)));
 
+        System.out.println("生成的验证码是" + mathRandom);
         // 定义返回值
         NumberCodeResponse numberCodeResponse = new NumberCodeResponse();
         numberCodeResponse.setNumberCode(mathRandom);
