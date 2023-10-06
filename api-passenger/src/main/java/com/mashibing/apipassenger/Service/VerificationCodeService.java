@@ -1,5 +1,7 @@
 package com.mashibing.apipassenger.Service;
 
+import com.mashibing.common.dto.ResponseResult;
+
 /**
  * @className: VerificationCodeService
  * @description: TODO 类描述
@@ -7,5 +9,5 @@ package com.mashibing.apipassenger.Service;
  * @date: 2023/10/6
  **/
 public interface VerificationCodeService {
-    public String generatorCode(String passengerPhone);
+    public ResponseResult generatorCode(String passengerPhone);
 }
