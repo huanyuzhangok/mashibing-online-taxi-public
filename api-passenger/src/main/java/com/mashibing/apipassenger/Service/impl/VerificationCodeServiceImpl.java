@@ -5,6 +5,7 @@ import com.mashibing.apipassenger.Service.VerificationCodeService;
 import com.mashibing.apipassenger.remote.ServiceVerificationClient;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.NumberCodeResponse;
+import com.mashibing.common.response.TokenResponse;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,6 +31,11 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 生成验证码
+     * @param passengerPhone 手机号
+     * @return
+     */
     @Override
     public ResponseResult generatorCode(String passengerPhone) {
         // TODO 生成验证码
@@ -43,5 +49,29 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
         // TODO 通过短信服务商将验证码发送到手机上
         return ResponseResult.success();
+    }
+
+    /**
+     * 校验验证码
+     * @param passengerPhone 手机号
+     * @param verificationCode 验证码
+     * @return
+     */
+    public ResponseResult checkCode(String passengerPhone, String verificationCode){
+
+        // 1 根据手机号去redis读取验证码
+        System.out.println("根据手机号去redis读取验证码");
+
+        // 2 校验验证码
+        System.out.println("校验验证码");
+        // 3 判断是否原来有用户进行对应处理
+        System.out.println("判断是否原来有用户进行对应处理");
+
+        // 4 颁发令牌
+        System.out.println("颁发令牌");
+        // 响应
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setToken("token value");
+        return ResponseResult.success(tokenResponse);
     }
 }

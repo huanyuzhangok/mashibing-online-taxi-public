@@ -10,4 +10,5 @@ import com.mashibing.common.dto.ResponseResult;
  **/
 public interface VerificationCodeService {
     public ResponseResult generatorCode(String passengerPhone);
+    public ResponseResult checkCode(String passengerPhone, String verificationCode);
 }
