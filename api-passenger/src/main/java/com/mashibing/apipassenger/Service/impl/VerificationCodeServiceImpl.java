@@ -1,13 +1,13 @@
 package com.mashibing.apipassenger.Service.impl;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mashibing.apipassenger.Service.VerificationCodeService;
+import com.mashibing.apipassenger.remote.ServicePassengerUserClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationClient;
 import com.mashibing.common.constant.CommonStatusEnum;
 import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.request.VerificationCodeDTO;
 import com.mashibing.common.response.NumberCodeResponse;
 import com.mashibing.common.response.TokenResponse;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,6 +32,9 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private ServicePassengerUserClient servicePassengerUserClient;
 
     /**
      * 生成验证码
@@ -70,6 +73,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         // 1 根据手机号去redis读取验证码
         // 生成key
         String key = generatorKeyByPhone(passengerPhone);
+        System.out.println("key是" + key);
         // 根据key获取value
         String codeRedis = stringRedisTemplate.opsForValue().get(key);
         System.out.println("redis中的value" + codeRedis);
@@ -81,7 +85,9 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(), CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
         // 3 判断是否原来有用户进行对应处理
-        System.out.println("判断是否原来有用户进行对应处理");
+        VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
+        verificationCodeDTO.setPassengerPhone(passengerPhone);
+        servicePassengerUserClient.loginOrRegister(verificationCodeDTO);
 
         // 4 颁发令牌
         System.out.println("颁发令牌");
