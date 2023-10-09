@@ -3,6 +3,9 @@ package com.mashibing.common.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.AlgorithmMismatchException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mashibing.common.dto.TokenResult;
@@ -66,6 +69,21 @@ public class JwtUtils {
         return tokenResult;
     }
 
+    /**
+     * 校验token，主要判断token是否异常
+     * @param token
+     * @return
+     */
+    public static TokenResult checkToken(String token) {
+        // 解析token
+        TokenResult tokenResult = null;
+        try {
+            tokenResult = JwtUtils.parseToken(token);
+        } catch (Exception e) {
+
+        }
+        return tokenResult;
+    }
 
     public static void main(String[] args) {
         String s = generatorToken("15799991111", "1", "accessToken");
