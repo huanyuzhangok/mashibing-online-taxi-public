@@ -44,7 +44,8 @@ public class JwtUtils {
         // 整合map
         map.forEach(builder::withClaim);
         // 整合过期时间
-        builder.withExpiresAt(date);
+        // 在校验验证码的地方设置了有效期
+//        builder.withExpiresAt(date);
 
         // 生成token
         return builder.sign(Algorithm.HMAC256(SIGN));
