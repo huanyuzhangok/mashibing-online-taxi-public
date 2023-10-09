@@ -6,7 +6,7 @@ package com.mashibing.common.constant;
  * @author: huanyuzhang
  * @date: 2023/10/9
  **/
-public class IdentityConstant {
+public class IdentityConstants {
     // 乘客身份
     public static final String PASSENGER_IDENTITY = "1";
 
