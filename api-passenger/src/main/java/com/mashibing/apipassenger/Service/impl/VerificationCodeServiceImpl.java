@@ -4,10 +4,12 @@ import com.mashibing.apipassenger.Service.VerificationCodeService;
 import com.mashibing.apipassenger.remote.ServicePassengerUserClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationClient;
 import com.mashibing.common.constant.CommonStatusEnum;
+import com.mashibing.common.constant.IdentityConstant;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.VerificationCodeDTO;
 import com.mashibing.common.response.NumberCodeResponse;
 import com.mashibing.common.response.TokenResponse;
+import com.mashibing.common.util.JwtUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -89,8 +91,8 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         verificationCodeDTO.setPassengerPhone(passengerPhone);
         servicePassengerUserClient.loginOrRegister(verificationCodeDTO);
 
-        // 4 颁发令牌
-        System.out.println("颁发令牌");
+        // 4 颁发令牌, 不应该用魔法值写，用枚举类型
+        String token = JwtUtils.generatorToken(passengerPhone, IdentityConstant.PASSENGER_IDENTITY);
         // 响应
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken("token value");
