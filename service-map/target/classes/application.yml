@@ -11,3 +11,6 @@ spring:
     host: 127.0.0.1
     port: 6379
     database: 0
+
+amap:
+  key: 90778616eaa1093f277e183dee0534ec

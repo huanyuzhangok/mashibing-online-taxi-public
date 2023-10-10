@@ -2,8 +2,10 @@ package com.mashibing.servicemap.service.impl;
 
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.DirectionResponse;
+import com.mashibing.servicemap.remote.MapDirectionClient;
 import com.mashibing.servicemap.service.DirectionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class DirectionServiceImpl implements DirectionService {
 
+    @Autowired
+    MapDirectionClient mapDirectionClient;
+
     /**
      * 根据七点经纬度和终点经纬度获取距离（米）和时长（分钟）
      * @param depLongitude
@@ -27,9 +32,7 @@ public class DirectionServiceImpl implements DirectionService {
     @Override
     public ResponseResult driving(String depLongitude, String depLatitude, String destLongitude, String destLatitude) {
 
-        DirectionResponse directionResponse = new DirectionResponse();
-        directionResponse.setDistance(123);
-        directionResponse.setDuration(11);
-        return ResponseResult.success(directionResponse);
+        DirectionResponse direction = mapDirectionClient.direction(depLongitude, depLatitude, destLongitude, destLatitude);
+        return ResponseResult.success(direction);
     }
 }
