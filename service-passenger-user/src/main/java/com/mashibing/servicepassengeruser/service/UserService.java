@@ -12,4 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  **/
 public interface UserService {
     public ResponseResult loginOrRegister(String passengerPhone);
+
+    public ResponseResult getUserByPhone(String passengerPhone);
 }
