@@ -1,10 +1,8 @@
-package com.mashibing.servicepassengeruser.dto;
+package com.mashibing.common.dto;
 
 import lombok.Data;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * @className: PassengerUser
@@ -21,4 +19,5 @@ public class PassengerUser {
     private String passengerName;
     private byte passengerGender;
     private byte state;
+    private String profilePhoto;
 }
