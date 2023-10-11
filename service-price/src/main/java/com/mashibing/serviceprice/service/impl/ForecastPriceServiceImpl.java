@@ -6,6 +6,7 @@ import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.ForecastPriceDTO;
 import com.mashibing.common.response.DirectionResponse;
 import com.mashibing.common.response.ForecastPriceResponse;
+import com.mashibing.common.util.BigDecimalUtils;
 import com.mashibing.serviceprice.mapper.PriceRuleMapper;
 import com.mashibing.serviceprice.remote.ServiceMapClient;
 import com.mashibing.serviceprice.service.ForecastPriceService;
@@ -51,13 +52,13 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
         ResponseResult<DirectionResponse> direction = serviceMapClient.direction(forecastPriceDTO);
         Integer distance = direction.getData().getDistance();
         Integer duration = direction.getData().getDuration();
-        log.info("距离: " + distance + " 时长: "+ duration);
+        log.info("距离: " + distance + " 时长: " + duration);
         log.info("读取计价规则");
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("city_code", "110000");
         queryMap.put("vehicle_type", "1");
         List<PriceRule> priceRules = priceRuleMapper.selectByMap(queryMap);
-        if (priceRules.size() == 0){
+        if (priceRules.size() == 0) {
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_EMPTY.getCode(), CommonStatusEnum.PRICE_RULE_EMPTY.getValue());
         }
         PriceRule priceRule = priceRules.get(0);
@@ -72,51 +73,46 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
 
     /**
      * 根据距离和时长计算最终价格
-     * @param distance 距离
-     * @param duration 时长
+     *
+     * @param distance  距离
+     * @param duration  时长
      * @param priceRule 计价规则
      * @return 最终价格
      */
-    private double getPrice(Integer distance, Integer duration, PriceRule priceRule){
+    private double getPrice(Integer distance, Integer duration, PriceRule priceRule) {
 
         // BigDecimal
-        BigDecimal price = new BigDecimal(0);
+        double price = 0;
 
         // 起步价
-        Double startFare = priceRule.getStartFare();
-        BigDecimal startFareDecimal = new BigDecimal(startFare);
-        price = price.add(startFareDecimal);
+        double startFare = priceRule.getStartFare();
+        price = BigDecimalUtils.add(price, startFare);
 
         // 里程费
-        // 总里程 m
-        BigDecimal distanceDecimal = new BigDecimal(distance);
-        // 总里程 km
-        BigDecimal distanceMileDecimal = distanceDecimal.divide(new BigDecimal(1000), 2, BigDecimal.ROUND_HALF_UP);
+        // 总里程
+        double distanceMile = BigDecimalUtils.divide(distance, 1000);
         // 起步的里程
-        Integer startMile = priceRule.getStartMile();
-        BigDecimal startMileDecimal = new BigDecimal(startMile);
-        double distanceSubtract = distanceMileDecimal.subtract(startMileDecimal).doubleValue();
+        double startMile = (double) priceRule.getStartMile();
+        double distanceSubtract = BigDecimalUtils.subtract(distanceMile, startMile);
         // 最终收费的里程数
         double mile = distanceSubtract < 0 ? 0 : distanceSubtract;
-        BigDecimal mileDecimal = new BigDecimal(mile);
         // 计程单价
-        Double unitPricePerMile = priceRule.getUnitPricePerMile();
-        BigDecimal unitPricePerMileDecimal = new BigDecimal(unitPricePerMile);
+        double unitPricePerMile = priceRule.getUnitPricePerMile();
         // 里程价格
-        BigDecimal mileFare = mileDecimal.multiply(unitPricePerMileDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
-        price = price.add(mileFare);
+        double mileFare = BigDecimalUtils.multiply(mile, unitPricePerMile);
+        price = BigDecimalUtils.add(price, mileFare);
 
         // 时长费
-        BigDecimal time = new BigDecimal(duration);
         // 分钟数
-        BigDecimal timeDecimal = time.divide(new BigDecimal(60), 2, BigDecimal.ROUND_HALF_UP);
+        double timeMinute = BigDecimalUtils.divide(duration, 60);
         // 计时单价
-        Double unitPricePerMinute = priceRule.getUnitPricePerMinute();
-        BigDecimal unitPricePerMinuteDecimal = new BigDecimal(unitPricePerMinute);
+        double unitPricePerMinute = priceRule.getUnitPricePerMinute();
         // 时长总费用
-        BigDecimal timeFare = timeDecimal.multiply(unitPricePerMinuteDecimal);
-        price = price.add(timeFare).setScale(2, BigDecimal.ROUND_HALF_UP);
-        return price.doubleValue();
+        double timeFare = BigDecimalUtils.multiply(timeMinute, unitPricePerMinute);
+        price = BigDecimalUtils.add(price, timeFare);
+        BigDecimal priceBigDecimal = BigDecimal.valueOf(price);
+        priceBigDecimal = priceBigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return priceBigDecimal.doubleValue();
     }
 
 //    public static void main(String[] args) {
