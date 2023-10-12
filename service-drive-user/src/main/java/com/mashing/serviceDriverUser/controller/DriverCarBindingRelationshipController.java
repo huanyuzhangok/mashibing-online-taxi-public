@@ -1,11 +1,17 @@
 package com.mashing.serviceDriverUser.controller;
 
 
+import com.mashibing.common.constant.DriverCarConstants;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.dto.DriverCarBindingRelationship;
 import com.mashing.serviceDriverUser.service.DriverCarBindingRelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * <p>
@@ -25,5 +31,10 @@ public class DriverCarBindingRelationshipController {
     @PostMapping("/bind")
     public ResponseResult bind(@RequestBody DriverCarBindingRelationship driverCarBindingRelationship){
         return driverCarBindingRelationshipService.bind(driverCarBindingRelationship);
+    }
+
+    @PostMapping("/unbind")
+    public ResponseResult unbind(@RequestBody DriverCarBindingRelationship driverCarBindingRelationship){
+        return driverCarBindingRelationshipService.unbind(driverCarBindingRelationship);
     }
 }

@@ -14,4 +14,6 @@ import com.mashibing.common.dto.ResponseResult;
 public interface DriverCarBindingRelationshipService {
 
     public ResponseResult bind(DriverCarBindingRelationship driverCarBindingRelationship);
+
+    ResponseResult unbind(DriverCarBindingRelationship driverCarBindingRelationship);
 }
