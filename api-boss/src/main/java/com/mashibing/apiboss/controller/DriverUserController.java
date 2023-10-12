@@ -1,6 +1,8 @@
 package com.mashibing.apiboss.controller;
 
+import com.mashibing.apiboss.service.CarService;
 import com.mashibing.apiboss.service.DriverUserService;
+import com.mashibing.common.dto.Car;
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ public class DriverUserController {
 
     @Autowired
     private DriverUserService driverUserService;
+    @Autowired
+    private CarService carService;
 
     /**
      * 添加司机操作
@@ -37,10 +41,18 @@ public class DriverUserController {
      * @param driverUser
      * @return
      */
-
-
     @PutMapping("/driver-user")
     public ResponseResult updateDriverUser(@RequestBody DriverUser driverUser){
         return driverUserService.updateDriverUser(driverUser);
+    }
+
+    /**
+     * 添加车辆信息
+     * @param car
+     * @return
+     */
+    @PostMapping("/car")
+    public ResponseResult addCar(@RequestBody Car car){
+        return carService.addCar(car);
     }
 }
