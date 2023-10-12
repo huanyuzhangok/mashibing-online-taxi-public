@@ -13,4 +13,6 @@ public interface DriverUserService {
     public ResponseResult testGetDriverUser();
 
     public ResponseResult addDriverUser(DriverUser driverUser);
+
+    public ResponseResult updateDriverUser(DriverUser driverUser);
 }
