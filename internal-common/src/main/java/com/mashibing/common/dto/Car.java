@@ -1,7 +1,5 @@
 package com.mashibing.common.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -168,7 +166,7 @@ public class Car implements Serializable {
     /**
      * 状态：0:有效，1：失效
      */
-    private Boolean state;
+    private Integer state;
 
     /**
      * 终端Id
