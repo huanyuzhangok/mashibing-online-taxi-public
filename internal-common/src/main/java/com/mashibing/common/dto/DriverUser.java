@@ -3,6 +3,7 @@ package com.mashibing.common.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -39,7 +40,7 @@ public class DriverUser {
     private LocalDate contractOn;
     private LocalDate contractOff;
     private Integer state;
-    private LocalDate gmtCreate;
-    private LocalDate gmtModified;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 
 }

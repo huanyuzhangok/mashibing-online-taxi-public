@@ -1,5 +1,6 @@
 package com.mashing.serviceDriverUser.service;
 
+import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 
 /**
@@ -10,4 +11,6 @@ import com.mashibing.common.dto.ResponseResult;
  **/
 public interface DriverUserService {
     public ResponseResult testGetDriverUser();
+
+    public ResponseResult addDriverUser(DriverUser driverUser);
 }
