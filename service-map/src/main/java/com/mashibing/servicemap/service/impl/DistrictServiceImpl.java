@@ -89,9 +89,9 @@ public class DistrictServiceImpl implements DistrictService {
             }
 
         }
-        // 插入数据库
 
-        return ResponseResult.success();
+
+        return ResponseResult.success("");
     }
 
     public void insertDicDistrict(String addressCode, String addressName, String parentAddressCode, String level){
@@ -103,6 +103,7 @@ public class DistrictServiceImpl implements DistrictService {
         int levelInt = generatorLevel(level);
         dicDistrict.setLevel(levelInt);
         log.info("插入的对象是  " + dicDistrict);
+        // 插入数据库
         dicDistrictMapper.insert(dicDistrict);
     }
 
