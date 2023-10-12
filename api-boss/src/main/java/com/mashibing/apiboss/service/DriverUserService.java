@@ -11,4 +11,6 @@ import com.mashibing.common.dto.ResponseResult;
  **/
 public interface DriverUserService {
     public ResponseResult addDriverUser(DriverUser driverUser);
+
+    public ResponseResult updateDriverUser(DriverUser driverUser);
 }
