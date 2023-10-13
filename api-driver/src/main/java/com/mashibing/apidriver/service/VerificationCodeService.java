@@ -10,4 +10,6 @@ import com.mashibing.common.dto.ResponseResult;
  **/
 public interface VerificationCodeService {
     public ResponseResult checkAndSendVerification(String driverPhone);
+
+    ResponseResult checkCode(String driverPhone, String verificationCode);
 }
