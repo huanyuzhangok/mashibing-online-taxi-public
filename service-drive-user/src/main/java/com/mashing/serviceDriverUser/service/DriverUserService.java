@@ -2,6 +2,7 @@ package com.mashing.serviceDriverUser.service;
 
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @className: DriverUserService
@@ -15,4 +16,6 @@ public interface DriverUserService {
     public ResponseResult addDriverUser(DriverUser driverUser);
 
     public ResponseResult updateDriverUser(DriverUser driverUser);
+
+    public ResponseResult<DriverUser> getDriverUserByPhone(String driverPhone);
 }

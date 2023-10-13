@@ -2,14 +2,13 @@ package com.mashing.serviceDriverUser.controller;
 
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.response.DriverUserExistsResponse;
 import com.mashing.serviceDriverUser.service.DriverUserService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @className: UserController
@@ -25,16 +24,48 @@ public class UserController {
     @Autowired
     private DriverUserService driverUserService;
 
+    /**
+     * 添加司机信息
+     * @param driverUser
+     * @return
+     */
     @PostMapping("/user")
     public ResponseResult addUser(@RequestBody DriverUser driverUser) {
         log.info("添加司机信息:  " + String.valueOf(JSONObject.fromObject(driverUser)));
         return driverUserService.addDriverUser(driverUser);
     }
 
+    /**
+     * 修改司机信息
+     * @param driverUser
+     * @return
+     */
     @PutMapping("/user")
     public ResponseResult updateUser(@RequestBody DriverUser driverUser) {
         log.info("修改司机信息:  " + String.valueOf(JSONObject.fromObject(driverUser)));
         return driverUserService.updateDriverUser(driverUser);
     }
 
+    /**
+     * 根据手机号查询司机信息
+     * @param driverPhone
+     * @return
+     */
+    @GetMapping("/check-driver/{driverPhone}")
+    public ResponseResult getUser(@PathVariable("driverPhone") String driverPhone){
+        ResponseResult<DriverUser> driverUserByPhone = driverUserService.getDriverUserByPhone(driverPhone);
+        DriverUser driverPhoneDB = driverUserByPhone.getData();
+        int ifExists = 1;
+        DriverUserExistsResponse response = new DriverUserExistsResponse();
+        if (driverPhoneDB == null){
+            ifExists = 0;
+            response.setIfExists(ifExists);
+            response.setDriverPhone(driverPhone);
+        }else {
+
+            response.setIfExists(ifExists);
+            response.setDriverPhone(driverPhoneDB.getDriverPhone());
+        }
+        return ResponseResult.success(response);
+    }
 }

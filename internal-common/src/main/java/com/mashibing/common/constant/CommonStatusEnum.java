@@ -41,6 +41,8 @@ public enum CommonStatusEnum {
      */
     DRIVER_CAR_BIND_NOT_EXISTS(1500, "司机和车辆绑定关系不存在"),
 
+    DRIVER_NOT_EXITST(1501, " 司机不存在"),
+
     DRIVER_CAR_BIND_EXISTS(1502, "司机和车辆绑定关系已存在， 请勿重复绑定"),
 
     DRIVER_BIND_EXISTS(1503, "司机已经和其他车辆绑定， 请勿重复绑定"),
