@@ -1,7 +1,8 @@
 package com.mashing.serviceDriverUser.mapper;
 
-import com.mashing.serviceDriverUser.entity.DriverUserWorkStatus;
+import com.mashibing.common.dto.DriverUserWorkStatus;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 张寰宇
  * @since 2023-10-13
  */
+@Repository
 public interface DriverUserWorkStatusMapper extends BaseMapper<DriverUserWorkStatus> {
 
 }

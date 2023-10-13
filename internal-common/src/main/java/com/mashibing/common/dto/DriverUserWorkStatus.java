@@ -1,6 +1,5 @@
-package com.mashing.serviceDriverUser.entity;
+package com.mashibing.common.dto;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
  * @author 张寰宇
  * @since 2023-10-13
  */
-@TableName("driver_user_work_status")
+
 public class DriverUserWorkStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;

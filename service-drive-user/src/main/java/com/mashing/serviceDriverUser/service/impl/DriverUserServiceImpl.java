@@ -3,8 +3,10 @@ package com.mashing.serviceDriverUser.service.impl;
 import com.mashibing.common.constant.CommonStatusEnum;
 import com.mashibing.common.constant.DriverCarConstants;
 import com.mashibing.common.dto.DriverUser;
+import com.mashibing.common.dto.DriverUserWorkStatus;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashing.serviceDriverUser.mapper.DriverUserMapper;
+import com.mashing.serviceDriverUser.mapper.DriverUserWorkStatusMapper;
 import com.mashing.serviceDriverUser.service.DriverUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class DriverUserServiceImpl implements DriverUserService {
     @Autowired
     private DriverUserMapper driverUserMapper;
 
+    @Autowired
+    private DriverUserWorkStatusMapper driverUserWorkStatusMapper;
+
     public ResponseResult testGetDriverUser(){
         DriverUser driverUser = driverUserMapper.selectById("1584359006294835202");
         return ResponseResult.success(driverUser);
@@ -39,6 +44,13 @@ public class DriverUserServiceImpl implements DriverUserService {
         driverUser.setGmtCreate(now);
         driverUser.setGmtModified(now);
         driverUserMapper.insert(driverUser);
+        // 初始化司机工作状态表
+        DriverUserWorkStatus driverUserWorkStatus = new DriverUserWorkStatus();
+        driverUserWorkStatus.setDriverId(driverUser.getId());
+        driverUserWorkStatus.setWorkStatus(DriverCarConstants.DRIVER_WORK_STATUS_STOP);
+        driverUserWorkStatus.setGmtCreate(now);
+        driverUserWorkStatus.setGmtModified(now);
+        driverUserWorkStatusMapper.insert(driverUserWorkStatus);
         return ResponseResult.success();
     }
 
