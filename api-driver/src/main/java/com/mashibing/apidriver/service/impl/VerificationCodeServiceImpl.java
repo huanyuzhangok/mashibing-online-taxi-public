@@ -5,12 +5,17 @@ import com.mashibing.apidriver.remote.ServiceVerificationCodeClient;
 import com.mashibing.apidriver.service.VerificationCodeService;
 import com.mashibing.common.constant.CommonStatusEnum;
 import com.mashibing.common.constant.DriverCarConstants;
+import com.mashibing.common.constant.IdentityConstants;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.DriverUserExistsResponse;
 import com.mashibing.common.response.NumberCodeResponse;
+import com.mashibing.common.util.RedisPrefixUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @className: VerificationCodeServiceImpl
@@ -28,6 +33,9 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
     @Autowired
     private ServiceVerificationCodeClient serviceVerificationCodeClient;
+    
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public ResponseResult checkAndSendVerification(String driverPhone){
 
@@ -47,6 +55,10 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         // TODO 调用第三方发送验证码
 
         // 存入redis
+        // 1 存入key
+        String key = RedisPrefixUtils.generatorKeyByPhone(driverPhone, IdentityConstants.DRIVER_IDENTITY);
+        // 2 存入value
+        stringRedisTemplate.opsForValue().set(key, numberCode+"", 2, TimeUnit.MINUTES);
 
         return ResponseResult.success();
     }

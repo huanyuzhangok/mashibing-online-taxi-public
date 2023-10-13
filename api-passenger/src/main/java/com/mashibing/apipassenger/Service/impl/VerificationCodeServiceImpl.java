@@ -36,7 +36,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     /**
      * 拦截器是在Spring的Bean初始化之前初始化的
      * 所以直接使用会出现stringRedisTemplate空指针对的错误
-     * */
+     */
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -56,14 +56,13 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         int numberCode = numberCodeResponse.getData().getNumberCode();
         // TODO 存入Redis
         // key value 过期时间
-        String key = RedisPrefixUtils.generatorKeyByPhone(passengerPhone);
+        String key = RedisPrefixUtils.generatorKeyByPhone(passengerPhone, IdentityConstants.PASSENGER_IDENTITY);
         // 存入redis
         stringRedisTemplate.opsForValue().set(key, numberCode + "", 2, TimeUnit.MINUTES);
 
         // TODO 通过短信服务商将验证码发送到手机上
         return ResponseResult.success();
     }
-
 
 
     /**
@@ -77,16 +76,16 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
         // 1 根据手机号去redis读取验证码
         // 生成key
-        String key = RedisPrefixUtils.generatorKeyByPhone(passengerPhone);
+        String key = RedisPrefixUtils.generatorKeyByPhone(passengerPhone, IdentityConstants.PASSENGER_IDENTITY);
         System.out.println("key是" + key);
         // 根据key获取value
         String codeRedis = stringRedisTemplate.opsForValue().get(key);
         System.out.println("redis中的value" + codeRedis);
         // 2 校验验证码
-        if (StringUtils.isBlank(codeRedis)){
+        if (StringUtils.isBlank(codeRedis)) {
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(), CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
-        if (!verificationCode.trim().equals(codeRedis.trim())){
+        if (!verificationCode.trim().equals(codeRedis.trim())) {
             return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(), CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
         // 3 判断是否原来有用户进行对应处理
