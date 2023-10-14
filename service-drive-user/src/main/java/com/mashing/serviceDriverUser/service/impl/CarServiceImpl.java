@@ -37,9 +37,10 @@ public class CarServiceImpl implements CarService {
         LocalDateTime now = LocalDateTime.now();
         car.setGmtModified(now);
         car.setGmtCreate(now);
+        carMapper.insert(car);
 
         // 获得车辆对应的tid
-        ResponseResult<TerminalResponse> responseResult = serviceMapClient.addTerminal(car.getVehicleNo());
+        ResponseResult<TerminalResponse> responseResult = serviceMapClient.addTerminal(car.getVehicleNo(), car.getId() + "");
         String tid = responseResult.getData().getTid();
         car.setTid(tid);
 
@@ -49,8 +50,8 @@ public class CarServiceImpl implements CarService {
         String trname = trackResponseResponseResult.getData().getTrname();
         car.setTrid(trid);
         car.setTrname(trname);
+        carMapper.updateById(car);
 
-        carMapper.insert(car);
         return ResponseResult.success();
     }
 
