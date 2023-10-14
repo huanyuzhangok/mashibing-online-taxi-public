@@ -1,6 +1,7 @@
 package com.mashibing.servicemap.service;
 
 import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.response.TerminalResponse;
 
 /**
  * @className: TerminalService
@@ -9,5 +10,5 @@ import com.mashibing.common.dto.ResponseResult;
  * @date: 2023/10/14
  **/
 public interface TerminalService {
-    public ResponseResult add(String name);
+    public ResponseResult<TerminalResponse> add(String name);
 }

@@ -2,7 +2,10 @@ package com.mashing.serviceDriverUser.service.impl;
 
 import com.mashibing.common.dto.Car;
 import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.dto.TokenResult;
+import com.mashibing.common.response.TerminalResponse;
 import com.mashing.serviceDriverUser.mapper.CarMapper;
+import com.mashing.serviceDriverUser.remote.ServiceMapClient;
 import com.mashing.serviceDriverUser.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +26,17 @@ public class CarServiceImpl implements CarService {
     @Autowired
     private CarMapper carMapper;
 
+    @Autowired
+    private ServiceMapClient serviceMapClient;
+
     public ResponseResult addCar(Car car){
         LocalDateTime now = LocalDateTime.now();
         car.setGmtModified(now);
         car.setGmtCreate(now);
+        // 获得车辆对应的tid
+        ResponseResult<TerminalResponse> responseResult = serviceMapClient.addTerminal(car.getVehicleNo());
+        String tid = responseResult.getData().getTid();
+        car.setTid(tid);
         carMapper.insert(car);
         return ResponseResult.success();
     }
