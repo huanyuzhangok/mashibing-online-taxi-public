@@ -7,6 +7,8 @@ import com.mashibing.servicemap.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @className: TerminalServiceImpl
  * @description: TODO 类描述
@@ -21,5 +23,10 @@ public class TerminalServiceImpl implements TerminalService {
 
     public ResponseResult<TerminalResponse> add(String name, String desc){
         return terminalClient.add(name, desc);
+    }
+
+    @Override
+    public ResponseResult<List<TerminalResponse>> aroundSearch(String center, Integer radius) {
+        return terminalClient.aroundSearch(center, radius);
     }
 }
