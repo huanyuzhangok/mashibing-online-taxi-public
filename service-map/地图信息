@@ -18,3 +18,44 @@
         "sid": 1008488
     }
 }
+
+终端：
+{
+    "errcode": 10000,
+    "errmsg": "OK",
+    "data": {
+        "count": 3,
+        "results": [
+            {
+                "name": "修改车辆2",
+                "tid": 770226954,
+                "createtime": 1697213637633,
+                "locatetime": 1697277695000
+            },
+            {
+                "name": "车辆3",
+                "tid": 770771656,
+                "desc": "100001",
+                "createtime": 1697298081038,
+                "locatetime": 0
+            },
+            {
+                "name": "车辆2",
+                "tid": 770447103,
+                "createtime": 1697260556817,
+                "locatetime": 0
+            }
+        ]
+    }
+}
+
+轨迹：
+{
+    "errcode": 10000,
+    "errmsg": "OK",
+    "data": {
+        "trname": "车辆3的轨迹",
+        "trid": 40
+    }
+}
+

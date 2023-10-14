@@ -10,5 +10,5 @@ import com.mashibing.common.response.TerminalResponse;
  * @date: 2023/10/14
  **/
 public interface TerminalService {
-    public ResponseResult<TerminalResponse> add(String name);
+    public ResponseResult<TerminalResponse> add(String name, String desc);
 }

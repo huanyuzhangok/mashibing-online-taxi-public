@@ -19,7 +19,7 @@ public class TerminalServiceImpl implements TerminalService {
     @Autowired
     private TerminalClient terminalClient;
 
-    public ResponseResult<TerminalResponse> add(String name){
-        return terminalClient.add(name);
+    public ResponseResult<TerminalResponse> add(String name, String desc){
+        return terminalClient.add(name, desc);
     }
 }
