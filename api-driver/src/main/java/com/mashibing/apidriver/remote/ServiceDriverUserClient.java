@@ -1,5 +1,6 @@
 package com.mashibing.apidriver.remote;
 
+import com.mashibing.common.dto.Car;
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.DriverUserExistsResponse;
@@ -21,4 +22,7 @@ public interface ServiceDriverUserClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/check-driver/{driverPhone}")
     public ResponseResult<DriverUserExistsResponse> checkDriver(@PathVariable("driverPhone") String driverPhone);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/car")
+    public ResponseResult<Car> getCarById(@RequestParam Long carId);
 }

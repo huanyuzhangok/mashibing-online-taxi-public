@@ -13,4 +13,6 @@ import com.mashibing.common.dto.ResponseResult;
  */
 public interface CarService{
     public ResponseResult addCar(Car car);
+
+    ResponseResult<Car> getCarById(Long carId);
 }
