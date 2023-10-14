@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+
 /**
  * @className: PointClient
  * @description: TODO 类描述
@@ -49,14 +51,14 @@ public class PointClient {
         for (PointDTO p : points){
             url.append("%7B");
             url.append("%22location%22").append("%3A").append("%22").append(p.getLocation()).append("%22").append("%2C");
-            url.append("%22localtime%22").append("%3A").append(p.getLocatetime());
+            url.append("%22locatetime%22").append("%3A").append(p.getLocatetime());
             url.append("%7D");
         }
         url.append("%5D");
 
         // 解析结果
         System.out.println("高德地图请求" + url.toString());
-        ResponseEntity<String> forEntity = restTemplate.postForEntity(url.toString(), null, String.class);
+        ResponseEntity<String> forEntity = restTemplate.postForEntity(URI.create(url.toString()), null, String.class);
         String body = forEntity.getBody();
         System.out.println("高德地图响应" + body);
         return ResponseResult.success();
