@@ -37,6 +37,8 @@ public class CarServiceImpl implements CarService {
         ResponseResult<TerminalResponse> responseResult = serviceMapClient.addTerminal(car.getVehicleNo());
         String tid = responseResult.getData().getTid();
         car.setTid(tid);
+        // 获得此车辆轨迹id, trid
+
         carMapper.insert(car);
         return ResponseResult.success();
     }
