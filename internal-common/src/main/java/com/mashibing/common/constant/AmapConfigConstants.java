@@ -22,6 +22,8 @@ public class AmapConfigConstants {
      */
     public static final String SERVICE_ADD_URL = "https://tsapi.amap.com/v1/track/service/add";
 
+    public static final String TERMINAL_ADD = "https://tsapi.amap.com/v1/track/terminal/add";
+
     /**
      * 路径规划JSON key值
      */

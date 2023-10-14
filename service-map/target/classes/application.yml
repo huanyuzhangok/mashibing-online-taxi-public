@@ -17,5 +17,7 @@ spring:
     port: 6379
     database: 0
 
+# 自定义的key value
 amap:
   key: 90778616eaa1093f277e183dee0534ec
+  sid: 1008595
