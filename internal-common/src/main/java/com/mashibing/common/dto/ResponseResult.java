@@ -12,15 +12,16 @@ import lombok.experimental.Accessors;
  **/
 @Data
 @Accessors(chain = true)
-public class ResponseResult <T>{
+public class ResponseResult<T> {
+
     private int code;
     private String message;
     private T data;
 
     /**
      * 成功响应的方法
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> ResponseResult success(){
         return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue());
@@ -29,8 +30,8 @@ public class ResponseResult <T>{
     /**
      * 成功响应的方法
      * @param data
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> ResponseResult success(T data){
         return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue()).setData(data);
@@ -39,31 +40,32 @@ public class ResponseResult <T>{
     /**
      * 失败：统一的失败
      * @param data
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> ResponseResult fail(T data){
         return new ResponseResult().setData(data);
     }
 
     /**
-     * 自定义失败
-     * @param code 自定义错误码
-     * @param message 认证信息
+     * 失败：自定义失败 错误码和提示信息
+     * @param code
+     * @param message
      * @return
      */
-    public static ResponseResult fail(int code, String message){
+    public static ResponseResult fail(int code,String message){
         return new ResponseResult().setCode(code).setMessage(message);
     }
 
     /**
-     * 自定义失败
-     * @param code 错误码
-     * @param message 提示信息
-     * @param data 具体错误
+     * 失败：自定义失败 错误码、提示信息、具体错误
+     * @param code
+     * @param message
+     * @param data
      * @return
      */
-    public static <T> ResponseResult fail(int code, String message, String data){
+    public static ResponseResult fail(int code,String message,String data){
         return new ResponseResult().setCode(code).setMessage(message).setData(data);
     }
+
 }

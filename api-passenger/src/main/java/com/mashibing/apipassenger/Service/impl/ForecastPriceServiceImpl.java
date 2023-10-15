@@ -48,7 +48,6 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
         forecastPriceDTO.setCityCode(cityCode);
         forecastPriceDTO.setVehicleType(vehicleType);
         ResponseResult<ForecastPriceResponse> forecast = servicePriceClient.forecast(forecastPriceDTO);
-        ForecastPriceResponse data = forecast.getData();
 
         ForecastPriceResponse forecastPriceResponse = forecast.getData();
         return ResponseResult.success(forecastPriceResponse);

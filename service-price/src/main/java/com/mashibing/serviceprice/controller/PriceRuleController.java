@@ -6,12 +6,9 @@ import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.serviceprice.service.PriceRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -40,4 +37,29 @@ public class PriceRuleController {
         log.info("修改的数据是" + priceRule);
         return priceRuleService.edit(priceRule);
     }
+
+    /**
+     * 查询最新的计价规则
+     * @param fareType
+     * @return
+     */
+    @GetMapping("/get-newest-version")
+    public ResponseResult<PriceRule> getNewestVersion(@RequestParam String fareType){
+        log.info("查询的计价规则是" + fareType);
+        return priceRuleService.getNewestVersion(fareType);
+    }
+
+    /**
+     * 查询最新的计价规则
+     * @param fareType
+     * @return
+     */
+    @GetMapping("/is-new")
+    public ResponseResult<Boolean> getIsNew(@RequestParam String fareType, @RequestParam Integer fareVersion){
+        log.info("fareType是 " + fareType);
+        log.info("fareVersion是 " + fareVersion);
+
+        return priceRuleService.getIsNew(fareType, fareVersion);
+    }
+
 }

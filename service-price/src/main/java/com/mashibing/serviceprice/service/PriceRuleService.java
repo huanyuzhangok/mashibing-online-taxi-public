@@ -16,4 +16,8 @@ public interface PriceRuleService {
     public ResponseResult add(@RequestBody PriceRule priceRule);
 
     ResponseResult edit(PriceRule priceRule);
+
+    ResponseResult<PriceRule> getNewestVersion(String fareType);
+
+    ResponseResult<Boolean> getIsNew(String fareType, Integer fareVersion);
 }
