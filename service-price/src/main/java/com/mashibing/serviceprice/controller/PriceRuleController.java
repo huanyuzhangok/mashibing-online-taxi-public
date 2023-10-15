@@ -34,4 +34,10 @@ public class PriceRuleController {
         log.info("插入的数据是" + priceRule);
         return priceRuleService.add(priceRule);
     }
+
+    @PostMapping("/edit")
+    public ResponseResult edit(@RequestBody PriceRule priceRule){
+        log.info("修改的数据是" + priceRule);
+        return priceRuleService.edit(priceRule);
+    }
 }

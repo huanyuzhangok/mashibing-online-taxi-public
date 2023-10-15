@@ -14,4 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 public interface PriceRuleService {
     public ResponseResult add(@RequestBody PriceRule priceRule);
+
+    ResponseResult edit(PriceRule priceRule);
 }
