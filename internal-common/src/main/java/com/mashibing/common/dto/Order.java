@@ -1,8 +1,5 @@
-package com.mashibing.serviceorder.entity;
+package com.mashibing.common.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,7 +14,6 @@ import java.time.LocalDateTime;
  * @since 2023-10-15
  */
 @Data
-@TableName("order_info")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,7 +21,6 @@ public class Order implements Serializable {
     /**
      * 订单ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -110,6 +105,9 @@ public class Order implements Serializable {
      */
     private String fareType;
 
+    /**
+     * 运价版本
+     */
     private Integer fareVersion;
 
     /**

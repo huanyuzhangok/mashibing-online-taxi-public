@@ -40,14 +40,10 @@ public class OrderRequest {
     private String destLongitude;
     // 目的地纬度
     private String destLatitude;
-    // 坐标加密标识
-    //1:GCJ-02测绘局标准
-    //2:WGS84 GPS标准
-    //3:BD-09 百度标准
-    //4:CGCS2000 北斗标准
-    //0:其他
+    // 坐标加密标识 1:GCJ-02测绘局标准 2:WGS84 GPS标准 3:BD-09 百度标准 4:CGCS2000 北斗标准 0:其他
     private Integer encrypt;
     // 运价类型编码
     private String fareType;
-
+    // 运价版本
+    private Integer fareVersion;
 }
