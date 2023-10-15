@@ -74,6 +74,8 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
         forecastPriceResponse.setPrice(price);
         forecastPriceResponse.setCityCode(cityCode);
         forecastPriceResponse.setVehicleType(vehicleType);
+        forecastPriceResponse.setFareType(priceRule.getFareType());
+        forecastPriceResponse.setFareVersion(priceRule.getFareVersion());
         log.info("传入的cityCode： " + cityCode);
         log.info("传入的vehicleType： " + vehicleType);
         log.info("返回的参数是: " + forecastPriceResponse);
