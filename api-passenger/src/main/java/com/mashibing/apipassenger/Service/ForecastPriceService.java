@@ -9,5 +9,5 @@ import com.mashibing.common.dto.ResponseResult;
  * @date: 2023/10/10
  **/
 public interface ForecastPriceService {
-    public ResponseResult forecastPrice(String depLongitude, String depLatitude, String destLongitude, String destLatitude);
+    public ResponseResult forecastPrice(String depLongitude, String depLatitude, String destLongitude, String destLatitude, String cityCode, String vehicleType);
 }

@@ -32,7 +32,7 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
      * @return
      */
     @Override
-    public ResponseResult forecastPrice(String depLongitude, String depLatitude, String destLongitude, String destLatitude) {
+    public ResponseResult forecastPrice(String depLongitude, String depLatitude, String destLongitude, String destLatitude, String cityCode, String vehicleType) {
 
         log.info("出发地经度" + depLongitude);
         log.info("出发地纬度" + depLatitude);
@@ -45,11 +45,15 @@ public class ForecastPriceServiceImpl implements ForecastPriceService {
         forecastPriceDTO.setDepLatitude(depLatitude);
         forecastPriceDTO.setDestLongitude(destLongitude);
         forecastPriceDTO.setDestLatitude(destLatitude);
+        forecastPriceDTO.setCityCode(cityCode);
+        forecastPriceDTO.setVehicleType(vehicleType);
         ResponseResult<ForecastPriceResponse> forecast = servicePriceClient.forecast(forecastPriceDTO);
         double price = forecast.getData().getPrice();
 
         ForecastPriceResponse forecastPriceResponse = new ForecastPriceResponse();
         forecastPriceResponse.setPrice(price);
+        forecastPriceDTO.setCityCode(cityCode);
+        forecastPriceDTO.setVehicleType(vehicleType);
         return ResponseResult.success(forecastPriceResponse);
     }
 }
