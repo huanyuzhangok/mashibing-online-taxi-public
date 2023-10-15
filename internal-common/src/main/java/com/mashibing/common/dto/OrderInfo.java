@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @since 2023-10-15
  */
 @Data
-public class Order implements Serializable {
+public class OrderInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

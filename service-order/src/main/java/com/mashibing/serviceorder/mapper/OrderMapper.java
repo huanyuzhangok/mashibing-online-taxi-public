@@ -1,6 +1,6 @@
 package com.mashibing.serviceorder.mapper;
 
-import com.mashibing.common.dto.Order;
+import com.mashibing.common.dto.OrderInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @since 2023-10-15
  */
 @Repository
-public interface OrderMapper extends BaseMapper<Order> {
+public interface OrderMapper extends BaseMapper<OrderInfo> {
 
 }
