@@ -1,5 +1,6 @@
 package com.mashibing.serviceorder.service.impl;
 
+import com.mashibing.common.constant.OrderConstants;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import com.mashibing.serviceorder.entity.Order;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -35,6 +38,10 @@ public class OrderServiceImpl implements OrderService {
     public ResponseResult add(OrderRequest orderRequest) {
         Order order = new Order();
         BeanUtils.copyProperties(orderRequest, order);
+        order.setOrderStatus(OrderConstants.ORDER_START);
+        LocalDateTime now = LocalDateTime.now();
+        order.setGmtCreate(now);
+        order.setGmtModified(now);
         log.info("要插入的数据是" + order);
         orderMapper.insert(order);
         return ResponseResult.success();
