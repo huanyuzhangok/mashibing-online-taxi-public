@@ -24,23 +24,23 @@ public class OrderRequest {
     // 出发地址
     private String departure;
     // 出发经度
-    private String deplongitude;
+    private String depLongitude;
     // 出发纬度
-    private String deplatitude;
+    private String depLatitude;
     // 目的地地址
     private String destination;
     // 目的地的经度
-    private String deslongitude;
+    private String destLongitude;
     // 目的地纬度
-    private String deslatitude;
+    private String destLatitude;
     // 坐标加密标识
     //1:GCJ-02测绘局标准
     //2:WGS84 GPS标准
     //3:BD-09 百度标准
     //4:CGCS2000 北斗标准
     //0:其他
-    private String encrypt;
+    private Integer encrypt;
     // 运价类型编码
-    private String faretype;
+    private String fareType;
 
 }

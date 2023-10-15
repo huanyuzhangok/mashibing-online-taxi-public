@@ -18,15 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order")
 @Slf4j
 public class OrderController {
+    @Autowired
+    private OrderService orderService;
 
     @PostMapping("/add")
     public ResponseResult add(@RequestBody OrderRequest orderRequest){
         log.info("service-order" + orderRequest);
-        return null;
+        return orderService.add(orderRequest);
     }
-
-    @Autowired
-    private OrderService orderService;
 
     @GetMapping("/testMapper")
     public String testMapper(){

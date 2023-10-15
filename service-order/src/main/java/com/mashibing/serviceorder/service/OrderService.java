@@ -1,7 +1,10 @@
 package com.mashibing.serviceorder.service;
 
+import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.request.OrderRequest;
 import com.mashibing.serviceorder.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * <p>
@@ -14,4 +17,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface OrderService{
 
     String testMapper();
+
+    public ResponseResult add(@RequestBody OrderRequest orderRequest);
 }
