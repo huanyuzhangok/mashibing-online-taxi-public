@@ -74,6 +74,7 @@ public class UserController {
 
     @GetMapping("/get-available-driver/{carId}")
     public ResponseResult<OrderDriverResponse> getAvailableDriver(@PathVariable("carId") Long carId){
+        log.info("获取到的carId是" + carId);
         return driverUserService.getAvailableDriver(carId);
     }
 }

@@ -7,6 +7,7 @@ import com.mashibing.common.dto.PriceRule;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import com.mashibing.common.dto.OrderInfo;
+import com.mashibing.common.response.OrderDriverResponse;
 import com.mashibing.common.response.TerminalResponse;
 import com.mashibing.common.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderMapper;
@@ -115,6 +116,7 @@ public class OrderServiceImpl implements OrderService {
         radiusList.add(4000);
         radiusList.add(5000);
         ResponseResult<List<TerminalResponse>> listResponseResult = null;
+        radius:
         for (int i = 0 ; i < radiusList.size(); i++){
             Integer radius = radiusList.get(i);
             listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
@@ -122,7 +124,21 @@ public class OrderServiceImpl implements OrderService {
             // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
-            List<TerminalResponse> data = listResponseResult.getData();
+            JSONArray result = JSONArray.fromObject(listResponseResult.getData());
+            for (int j = 0 ; j < result.size(); j++){
+                JSONObject jsonObject = result.getJSONObject(j);
+                String carIdString = jsonObject.getString("carId");
+                long carId = Long.parseLong(carIdString);
+                // 查询是否有对应的可派单司机
+                ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
+                if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()){
+                    log.info("没有车辆Id" + carId + "对应的信息");
+                    continue radius;
+                }else {
+                    log.info("找到了正在出车的司机，车辆Id" + carId);
+                    break radius;
+                }
+            }
 
             // 根据解析出来的终端，查询车辆
 
