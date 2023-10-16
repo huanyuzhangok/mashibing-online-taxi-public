@@ -63,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseResult add(OrderRequest orderRequest) {
 
+        log.info("传送的orderRequest是" + orderRequest);
         // 查询当前城市是否有可用的司机
         if (hasAvailableDriver(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY.getCode(), CommonStatusEnum.CITY_DRIVER_EMPTY.getValue());
@@ -83,8 +84,7 @@ public class OrderServiceImpl implements OrderService {
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
         }
 
-
-
+        // 判断当前是否有订单
         Integer validOrderNumber = isOrderGoingOn(orderRequest.getPassengerId());
         if (validOrderNumber > 0) {
             return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON.getCode(), CommonStatusEnum.ORDER_GOING_ON.getValue());
@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         orderInfo.setGmtCreate(now);
         orderInfo.setGmtModified(now);
         log.info("要插入的数据是" + orderInfo);
-//        orderMapper.insert(orderInfo);
+        orderMapper.insert(orderInfo);
         // 派单
         dispatchRealTimeOrder(orderInfo);
         return ResponseResult.success();
@@ -118,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
         for (int i = 0 ; i < radiusList.size(); i++){
             Integer radius = radiusList.get(i);
             listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
-            log.info("在半径为" + radius + "寻找车辆结果  " + JSONObject.fromObject(listResponseResult.getData().toString()));
+            log.info("在半径为"+radius+"的范围内，寻找车辆,结果："+ JSONArray.fromObject(listResponseResult.getData()).toString());
             // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
