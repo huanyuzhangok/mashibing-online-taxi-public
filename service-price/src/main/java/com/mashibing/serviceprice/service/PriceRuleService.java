@@ -20,4 +20,6 @@ public interface PriceRuleService {
     ResponseResult<PriceRule> getNewestVersion(String fareType);
 
     ResponseResult<Boolean> getIsNew(String fareType, Integer fareVersion);
+
+    ResponseResult<Boolean> ifExists(PriceRule priceRule);
 }
