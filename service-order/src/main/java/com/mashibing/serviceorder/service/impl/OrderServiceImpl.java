@@ -9,6 +9,7 @@ import com.mashibing.common.request.OrderRequest;
 import com.mashibing.common.dto.OrderInfo;
 import com.mashibing.common.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderMapper;
+import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import com.mashibing.serviceorder.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,9 @@ public class OrderServiceImpl implements OrderService {
     private ServicePriceClient servicePriceClient;
 
     @Autowired
+    private ServiceDriverUserClient serviceDriverUserClient;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -50,6 +54,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseResult add(OrderRequest orderRequest) {
 
+        // 测试当前城市是否有可用的司机
+        if (hasAvailableDriver(orderRequest)){
+            return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY.getCode(), CommonStatusEnum.CITY_DRIVER_EMPTY.getValue());
+        }
 
         // 判断下单的城市和计价规则是否正常
         if (!(isPriceRuleExists(orderRequest))){
@@ -57,12 +65,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 判断计价规则的版本是否为最新
-        log.info("传递的orderRequest是" + orderRequest);
-        ResponseResult<Boolean> isNew = servicePriceClient.isNew(orderRequest.getFareType(), orderRequest.getFareVersion());
-        if (!(isNew.getData())) {
+        if (priceRuleIsNew(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED.getCode(), CommonStatusEnum.PRICE_RULE_CHANGED.getValue());
         }
-
+        
         // 判断黑名单
         if (isBlackDevice(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
@@ -85,6 +91,24 @@ public class OrderServiceImpl implements OrderService {
 //        log.info("要插入的数据是" + orderInfo);
 //        orderMapper.insert(orderInfo);
         return ResponseResult.success();
+    }
+
+    private boolean priceRuleIsNew(OrderRequest orderRequest) {
+        log.info("传递的orderRequest是" + orderRequest);
+        ResponseResult<Boolean> isNew = servicePriceClient.isNew(orderRequest.getFareType(), orderRequest.getFareVersion());
+        if (!(isNew.getData())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasAvailableDriver(OrderRequest orderRequest) {
+        ResponseResult<Boolean> availableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
+        log.info("测试城市是否有司机结果" + availableDriver.getData());
+        if (!availableDriver.getData()){
+            return true;
+        }
+        return false;
     }
 
     private boolean isPriceRuleExists(OrderRequest orderRequest){
