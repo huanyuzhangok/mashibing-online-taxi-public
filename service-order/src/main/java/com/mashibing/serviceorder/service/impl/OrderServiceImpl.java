@@ -7,9 +7,11 @@ import com.mashibing.common.dto.PriceRule;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import com.mashibing.common.dto.OrderInfo;
+import com.mashibing.common.response.TerminalResponse;
 import com.mashibing.common.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
+import com.mashibing.serviceorder.remote.ServiceMapClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
 import com.mashibing.serviceorder.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,6 +47,9 @@ public class OrderServiceImpl implements OrderService {
     private ServiceDriverUserClient serviceDriverUserClient;
 
     @Autowired
+    private ServiceMapClient serviceMapClient;
+
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -54,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseResult add(OrderRequest orderRequest) {
 
-        // 测试当前城市是否有可用的司机
+        // 查询当前城市是否有可用的司机
         if (hasAvailableDriver(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY.getCode(), CommonStatusEnum.CITY_DRIVER_EMPTY.getValue());
         }
@@ -68,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         if (priceRuleIsNew(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED.getCode(), CommonStatusEnum.PRICE_RULE_CHANGED.getValue());
         }
-        
+
         // 判断黑名单
         if (isBlackDevice(orderRequest)){
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
@@ -82,15 +88,40 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 创建订单
-//        OrderInfo orderInfo = new OrderInfo();
-//        BeanUtils.copyProperties(orderRequest, orderInfo);
-//        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
-//        LocalDateTime now = LocalDateTime.now();
-//        orderInfo.setGmtCreate(now);
-//        orderInfo.setGmtModified(now);
-//        log.info("要插入的数据是" + orderInfo);
+        OrderInfo orderInfo = new OrderInfo();
+        BeanUtils.copyProperties(orderRequest, orderInfo);
+        orderInfo.setOrderStatus(OrderConstants.ORDER_START);
+        LocalDateTime now = LocalDateTime.now();
+        orderInfo.setGmtCreate(now);
+        orderInfo.setGmtModified(now);
+        log.info("要插入的数据是" + orderInfo);
 //        orderMapper.insert(orderInfo);
+        // 派单
+        dispatchRealTimeOrder(orderInfo);
         return ResponseResult.success();
+    }
+
+    public void dispatchRealTimeOrder(OrderInfo orderInfo){
+
+        String depLongitude = orderInfo.getDepLongitude();
+        String depLatitude = orderInfo.getDepLatitude();
+        int radius = 2000;
+        String center = depLatitude + "," + depLongitude;
+        // 2km
+        ResponseResult<List<TerminalResponse>> listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
+        List<TerminalResponse> data = listResponseResult.getData();
+        if (data.size() == 0){
+            radius += 2000;
+            listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
+            if (listResponseResult.getData().size() == 0){
+                radius += 1000;
+                listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
+                if(listResponseResult.getData().size() == 0){
+                    log.info("此轮派单没找到车, 找了 2km 4km 6km");
+                }
+            }
+        }
+
     }
 
     private boolean priceRuleIsNew(OrderRequest orderRequest) {
