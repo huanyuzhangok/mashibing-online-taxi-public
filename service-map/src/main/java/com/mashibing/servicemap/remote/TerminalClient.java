@@ -104,11 +104,19 @@ public class TerminalClient {
         for (int i = 0 ; i < results.size(); i++){
             TerminalResponse terminalResponse = new TerminalResponse();
             JSONObject jsonObject = results.getJSONObject(i);
+
+            // desc是carId
             Long carId = Long.parseLong(jsonObject.getString("desc"));
             String tid = jsonObject.getString("tid");
             String name = jsonObject.getString("name");
+            JSONObject location = jsonObject.getJSONObject("location");
+            String longitude = location.getString("longitude");
+            String latitude = location.getString("latitude");
+
             terminalResponse.setCarId(carId);
             terminalResponse.setTid(tid);
+            terminalResponse.setLongitude(longitude);
+            terminalResponse.setLatitude(latitude);
             terminalResponseList.add(terminalResponse);
         }
 

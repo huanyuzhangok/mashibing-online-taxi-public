@@ -3,6 +3,7 @@ package com.mashibing.serviceorder.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.common.constant.CommonStatusEnum;
 import com.mashibing.common.constant.OrderConstants;
+import com.mashibing.common.dto.Car;
 import com.mashibing.common.dto.PriceRule;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
@@ -65,22 +66,22 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("传送的orderRequest是" + orderRequest);
         // 查询当前城市是否有可用的司机
-        if (hasAvailableDriver(orderRequest)){
+        if (hasAvailableDriver(orderRequest)) {
             return ResponseResult.fail(CommonStatusEnum.CITY_DRIVER_EMPTY.getCode(), CommonStatusEnum.CITY_DRIVER_EMPTY.getValue());
         }
 
         // 判断下单的城市和计价规则是否正常
-        if (!(isPriceRuleExists(orderRequest))){
+        if (!(isPriceRuleExists(orderRequest))) {
             return ResponseResult.fail(CommonStatusEnum.CITY_SERVICE_NOT_SERVICE.getCode(), CommonStatusEnum.CITY_SERVICE_NOT_SERVICE.getValue());
         }
 
         // 判断计价规则的版本是否为最新
-        if (priceRuleIsNew(orderRequest)){
+        if (priceRuleIsNew(orderRequest)) {
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_CHANGED.getCode(), CommonStatusEnum.PRICE_RULE_CHANGED.getValue());
         }
 
         // 判断黑名单
-        if (isBlackDevice(orderRequest)){
+        if (isBlackDevice(orderRequest)) {
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
         }
 
@@ -104,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         return ResponseResult.success();
     }
 
-    public void dispatchRealTimeOrder(OrderInfo orderInfo){
+    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
 
         String depLongitude = orderInfo.getDepLongitude();
         String depLatitude = orderInfo.getDepLatitude();
@@ -116,30 +117,59 @@ public class OrderServiceImpl implements OrderService {
         radiusList.add(5000);
         ResponseResult<List<TerminalResponse>> listResponseResult = null;
         radius:
-        for (int i = 0 ; i < radiusList.size(); i++){
+        for (int i = 0; i < radiusList.size(); i++) {
             Integer radius = radiusList.get(i);
             listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
-            log.info("在半径为"+radius+"的范围内，寻找车辆,结果："+ JSONArray.fromObject(listResponseResult.getData()).toString());
+            log.info("在半径为" + radius + "的范围内，寻找车辆,结果：" + JSONArray.fromObject(listResponseResult.getData()).toString());
             // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
             JSONArray result = JSONArray.fromObject(listResponseResult.getData());
-            for (int j = 0 ; j < result.size(); j++){
+            for (int j = 0; j < result.size(); j++) {
                 JSONObject jsonObject = result.getJSONObject(j);
                 String carIdString = jsonObject.getString("carId");
                 long carId = Long.parseLong(carIdString);
+                String longitude = jsonObject.getString("longitude");
+                String latitude = jsonObject.getString("latitude");
                 // 查询是否有对应的可派单司机
                 ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
-                if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()){
+                if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()) {
                     log.info("没有车辆Id" + carId + "对应的信息");
                     continue;
-                }else {
+                } else {
                     log.info("找到了正在出车的司机，车辆Id" + carId);
-                    Long driverId = availableDriver.getData().getDriverId();
+                    OrderDriverResponse data = availableDriver.getData();
+                    Long driverId = data.getDriverId();
+                    String driverPhone = data.getDriverPhone();
+                    String licenseId = data.getLicenseId();
+                    String vehicleNo = data.getVehicleNo();
                     // 判断司机当前是否有订单
                     if (isDriverOrderGoingOn(driverId) > 0) {
                         continue;
                     }
+
+                    // 订单直接匹配司机
+                    // 查询当前车辆信息
+                    QueryWrapper<Car> carQueryWrapper = new QueryWrapper<>();
+                    carQueryWrapper.eq("id",carId);
+
+
+                    // 设置订单中和司机车辆相关的信息
+                    orderInfo.setDriverId(driverId);
+                    orderInfo.setDriverPhone(driverPhone);
+                    orderInfo.setCarId(carId);
+                    // 从地图中来
+                    orderInfo.setReceiveOrderCarLongitude(longitude);
+                    orderInfo.setReceiveOrderCarLatitude(latitude);
+
+                    orderInfo.setReceiveOrderTime(LocalDateTime.now());
+                    orderInfo.setLicenseId(licenseId);
+                    orderInfo.setVehicleNo(vehicleNo);
+                    orderInfo.setOrderStatus(OrderConstants.DRIVER_RECEIVE_ORDER);
+
+                    orderMapper.updateById(orderInfo);
+
+
                     // 退出不再进行司机的查找
                     break radius;
                 }
@@ -165,13 +195,13 @@ public class OrderServiceImpl implements OrderService {
     private boolean hasAvailableDriver(OrderRequest orderRequest) {
         ResponseResult<Boolean> availableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
         log.info("测试城市是否有司机结果" + availableDriver.getData());
-        if (!availableDriver.getData()){
+        if (!availableDriver.getData()) {
             return true;
         }
         return false;
     }
 
-    private boolean isPriceRuleExists(OrderRequest orderRequest){
+    private boolean isPriceRuleExists(OrderRequest orderRequest) {
         String fareType = orderRequest.getFareType();
         String cityCode = fareType.substring(0, fareType.indexOf("$"));
         String vehicleType = fareType.substring(fareType.indexOf("$") + 1);
@@ -191,16 +221,16 @@ public class OrderServiceImpl implements OrderService {
         String deviceCodeKey = RedisPrefixUtils.blackDeviceCodePrefix + deviceCode;
 
         Boolean aBoolean = stringRedisTemplate.hasKey(deviceCodeKey);
-        if (aBoolean){
+        if (aBoolean) {
             String s = stringRedisTemplate.opsForValue().get(deviceCodeKey);
             int i = Integer.parseInt(s);
-            if (i >= 2){
+            if (i >= 2) {
                 // 当前设备超过下单次数
                 return true;
-            }else {
+            } else {
                 stringRedisTemplate.opsForValue().increment(deviceCodeKey);
             }
-        }else {
+        } else {
             stringRedisTemplate.opsForValue().setIfAbsent(deviceCodeKey, "1", 1, TimeUnit.HOURS);
         }
         return false;
@@ -208,6 +238,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断乘客是否有业务中的订单
+     *
      * @param passengerId
      * @return
      */
@@ -230,21 +261,22 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断司机是否有业务中的订单
+     *
      * @param driverId
      * @return
      */
     private int isDriverOrderGoingOn(Long driverId) {
         // 判断有正在进行的订单不允许下单
         QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("driver+id", driverId);
+        queryWrapper.eq("driver_id", driverId);
         queryWrapper.and(wrapper -> {
             wrapper.eq("order_status", OrderConstants.DRIVER_RECEIVE_ORDER)
                     .or().eq("order_status", OrderConstants.DRIVER_TO_PICK_UP_PASSENGER)
                     .or().eq("order_status", OrderConstants.DRIVER_ARRIVED_DEPARTURE)
-                    .or().eq("order_status", OrderConstants.PICK_UP_PASSENGER)
+                    .or().eq("order_status", OrderConstants.PICK_UP_PASSENGER);
         });
         Integer integer = orderMapper.selectCount(queryWrapper);
-        log.info("司机ID" + driverId + "正在进行的订单数量" +  integer);
+        log.info("司机ID" + driverId + "正在进行的订单数量" + integer);
         return integer;
     }
 
