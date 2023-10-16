@@ -20,7 +20,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -85,8 +84,8 @@ public class OrderServiceImpl implements OrderService {
             return ResponseResult.fail(CommonStatusEnum.DEVICE_IS_BLACK.getCode(), CommonStatusEnum.DEVICE_IS_BLACK.getValue());
         }
 
-        // 判断当前是否有订单
-        Integer validOrderNumber = isOrderGoingOn(orderRequest.getPassengerId());
+        // 判断乘客当前是否有订单
+        Integer validOrderNumber = isPassengerOrderGoingOn(orderRequest.getPassengerId());
         if (validOrderNumber > 0) {
             return ResponseResult.fail(CommonStatusEnum.ORDER_GOING_ON.getCode(), CommonStatusEnum.ORDER_GOING_ON.getValue());
         }
@@ -133,9 +132,15 @@ public class OrderServiceImpl implements OrderService {
                 ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
                 if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()){
                     log.info("没有车辆Id" + carId + "对应的信息");
-                    continue radius;
+                    continue;
                 }else {
                     log.info("找到了正在出车的司机，车辆Id" + carId);
+                    Long driverId = availableDriver.getData().getDriverId();
+                    // 判断司机当前是否有订单
+                    if (isDriverOrderGoingOn(driverId) > 0) {
+                        continue;
+                    }
+                    // 退出不再进行司机的查找
                     break radius;
                 }
             }
@@ -202,11 +207,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 判断是否有业务中的订单
+     * 判断乘客是否有业务中的订单
      * @param passengerId
      * @return
      */
-    private int isOrderGoingOn(Long passengerId) {
+    private int isPassengerOrderGoingOn(Long passengerId) {
         // 判断有正在进行的订单不允许下单
         QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("passenger_id", passengerId);
@@ -222,4 +227,25 @@ public class OrderServiceImpl implements OrderService {
 
         return orderMapper.selectCount(queryWrapper);
     }
+
+    /**
+     * 判断司机是否有业务中的订单
+     * @param driverId
+     * @return
+     */
+    private int isDriverOrderGoingOn(Long driverId) {
+        // 判断有正在进行的订单不允许下单
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("driver+id", driverId);
+        queryWrapper.and(wrapper -> {
+            wrapper.eq("order_status", OrderConstants.DRIVER_RECEIVE_ORDER)
+                    .or().eq("order_status", OrderConstants.DRIVER_TO_PICK_UP_PASSENGER)
+                    .or().eq("order_status", OrderConstants.DRIVER_ARRIVED_DEPARTURE)
+                    .or().eq("order_status", OrderConstants.PICK_UP_PASSENGER)
+        });
+        Integer integer = orderMapper.selectCount(queryWrapper);
+        log.info("司机ID" + driverId + "正在进行的订单数量" +  integer);
+        return integer;
+    }
+
 }
