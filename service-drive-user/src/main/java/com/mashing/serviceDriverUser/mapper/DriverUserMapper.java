@@ -2,6 +2,7 @@ package com.mashing.serviceDriverUser.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mashibing.common.dto.DriverUser;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,5 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DriverUserMapper extends BaseMapper<DriverUser> {
 
-    int select1(String arg);
+    int select1(@Param("cityCode") String cityCode);
 }

@@ -35,7 +35,10 @@ public class TestController {
     private DriverUserMapper driverUserMapper;
     // 测试mapper中的xml是否正常使用
     @GetMapping("/test-xml")
-    public int testXml(String args){
-        return driverUserMapper.select1("1");
+    public int testXml(String cityCode){
+        System.out.println("cityCode" + cityCode);
+        int res = driverUserMapper.select1(cityCode);
+        System.out.println("查询的结果是" + res);
+        return res;
     }
 }
