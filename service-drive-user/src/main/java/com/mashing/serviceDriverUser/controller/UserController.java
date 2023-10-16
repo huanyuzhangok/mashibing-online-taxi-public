@@ -4,6 +4,7 @@ import com.mashibing.common.constant.DriverCarConstants;
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.DriverUserExistsResponse;
+import com.mashibing.common.response.OrderDriverResponse;
 import com.mashing.serviceDriverUser.service.DriverUserService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -68,5 +69,11 @@ public class UserController {
             response.setDriverPhone(driverPhoneDB.getDriverPhone());
         }
         return ResponseResult.success(response);
+    }
+
+
+    @GetMapping("/get-available-driver/{carId}")
+    public ResponseResult<OrderDriverResponse> getAvailableDriver(@PathVariable("carId") Long carId){
+        return driverUserService.getAvailableDriver(carId);
     }
 }

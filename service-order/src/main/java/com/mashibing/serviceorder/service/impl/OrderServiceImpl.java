@@ -119,9 +119,10 @@ public class OrderServiceImpl implements OrderService {
             Integer radius = radiusList.get(i);
             listResponseResult = serviceMapClient.terminalAroundSearch(center, radius);
             log.info("在半径为" + radius + "寻找车辆结果  " + JSONObject.fromObject(listResponseResult.getData().toString()));
-            // 获得终端
+            // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
+            List<TerminalResponse> data = listResponseResult.getData();
 
             // 根据解析出来的终端，查询车辆
 
