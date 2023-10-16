@@ -1,6 +1,7 @@
 package com.mashing.serviceDriverUser.controller;
 
 import com.mashibing.common.dto.ResponseResult;
+import com.mashing.serviceDriverUser.mapper.DriverUserMapper;
 import com.mashing.serviceDriverUser.service.DriverUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,5 +28,14 @@ public class TestController {
     @GetMapping("/test-db")
     public ResponseResult testDb(){
         return driverUserService.testGetDriverUser();
+    }
+
+
+    @Autowired
+    private DriverUserMapper driverUserMapper;
+    // 测试mapper中的xml是否正常使用
+    @GetMapping("/test-xml")
+    public int testXml(String args){
+        return driverUserMapper.select1("1");
     }
 }
