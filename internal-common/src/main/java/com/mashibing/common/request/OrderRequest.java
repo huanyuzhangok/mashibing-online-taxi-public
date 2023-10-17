@@ -95,6 +95,11 @@ public class OrderRequest {
      * 乘客下车纬度
      */
     private String passengerGetoffLatitude;
+    /**
+     * 乘客下车时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime passengerGetoffTime;
 
     /**
      * 车型

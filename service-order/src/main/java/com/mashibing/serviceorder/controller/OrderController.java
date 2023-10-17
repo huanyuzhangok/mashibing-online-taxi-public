@@ -26,6 +26,13 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+
+    @GetMapping("/testMapper")
+    public String testMapper(){
+        return orderService.testMapper();
+    }
+
+
     /**
      * 添加乘客订单
      * @param orderRequest
@@ -69,12 +76,13 @@ public class OrderController {
         return orderService.pickUpPassenger(orderRequest);
     }
 
-    @GetMapping("/testMapper")
-    public String testMapper(){
-        return orderService.testMapper();
+    /**
+     * 乘客到达目的地，行程终止
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/passenger-getoff")
+    public ResponseResult passengerGetoff(@RequestBody OrderRequest orderRequest){
+        return orderService.passengerGetoff(orderRequest);
     }
-
-//    "passengerGetoffLongitude": "116.40",
-//            "passengerGetoffLatitude": "39.91",
-//            "vehicleType": ""
 }
