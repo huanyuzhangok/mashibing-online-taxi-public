@@ -105,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         return ResponseResult.success();
     }
 
-    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
+    public synchronized void dispatchRealTimeOrder(OrderInfo orderInfo) {
 
         String depLongitude = orderInfo.getDepLongitude();
         String depLatitude = orderInfo.getDepLatitude();
