@@ -24,6 +24,12 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    /**
+     * 添加乘客订单
+     * @param orderRequest
+     * @param httpServletRequest
+     * @return
+     */
     @PostMapping("/add")
     public ResponseResult add(@RequestBody OrderRequest orderRequest, HttpServletRequest httpServletRequest){
         // 测试通过，通过header获取deviceCode
@@ -31,6 +37,22 @@ public class OrderController {
 //        orderRequest.setDeviceCode(deviceCode);
         log.info("service-order" + orderRequest);
         return orderService.add(orderRequest);
+    }
+
+    /**
+     * 去接乘客
+     * @param orderRequest
+     * @return
+     */
+    @PostMapping("/pick-up-passenger")
+    public ResponseResult changeStatus(@RequestBody OrderRequest orderRequest){
+
+//        "pickUpPassengerLongitude": "",
+//                "pickUpPassengerLatitude": "",
+//                "passengerGetoffLongitude": "",
+//                "passengerGetoffLatitude": "",
+//                "vehicleType": ""
+        return orderService.toPickUpPassenger(orderRequest);
     }
 
     @GetMapping("/testMapper")

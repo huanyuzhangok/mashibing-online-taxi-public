@@ -72,6 +72,11 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectMaps(null).toString();
     }
 
+    /**
+     * 新建订单
+     * @param orderRequest
+     * @return
+     */
     @Override
     public ResponseResult add(OrderRequest orderRequest) {
 
@@ -270,6 +275,11 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
+    /**
+     * 判断是否有空闲司机
+     * @param orderRequest
+     * @return
+     */
     private boolean hasAvailableDriver(OrderRequest orderRequest) {
         ResponseResult<Boolean> availableDriver = serviceDriverUserClient.isAvailableDriver(orderRequest.getAddress());
         log.info("测试城市是否有司机结果" + availableDriver.getData());
@@ -364,6 +374,29 @@ public class OrderServiceImpl implements OrderService {
         Integer integer = orderMapper.selectCount(queryWrapper);
         log.info("司机ID" + driverId + "正在进行的订单数量" + integer);
         return integer;
+    }
+
+    /**
+     * 去接乘客
+     * @param orderRequest
+     * @return
+     */
+    public ResponseResult toPickUpPassenger(OrderRequest orderRequest){
+        Long orderId = orderRequest.getOrderId();
+        LocalDateTime toPickUpPassengerTime = orderRequest.getToPickUpPassengerTime();
+        String toPickUpPassengerLongitude = orderRequest.getToPickUpPassengerLongitude();
+        String toPickUpPassengerLatitude = orderRequest.getToPickUpPassengerLatitude();
+        String toPickUpPassengerAddress = orderRequest.getToPickUpPassengerAddress();
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", orderId);
+        OrderInfo orderInfo = orderMapper.selectOne(queryWrapper);
+        orderInfo.setToPickUpPassengerAddress(toPickUpPassengerAddress);
+        orderInfo.setToPickUpPassengerLatitude(toPickUpPassengerLatitude);
+        orderInfo.setToPickUpPassengerLongitude(toPickUpPassengerLongitude);
+        orderInfo.setToPickUpPassengerTime(LocalDateTime.now());
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_TO_PICK_UP_PASSENGER);
+        orderMapper.updateById(orderInfo);
+        return ResponseResult.success();
     }
 
 }

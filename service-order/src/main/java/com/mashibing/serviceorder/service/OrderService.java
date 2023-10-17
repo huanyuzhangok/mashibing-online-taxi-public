@@ -16,5 +16,7 @@ public interface OrderService{
 
     String testMapper();
 
-    public ResponseResult add(@RequestBody OrderRequest orderRequest);
+    ResponseResult add(@RequestBody OrderRequest orderRequest);
+
+    ResponseResult toPickUpPassenger(OrderRequest orderRequest);
 }
