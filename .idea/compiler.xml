@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="internal-common" />
         <module name="api-boss" />
+        <module name="service-sse-push" />
         <module name="api-passenger" />
         <module name="service-drive-user" />
         <module name="service-verificationcode" />
@@ -30,6 +31,7 @@
       <module name="service-order" options="-parameters" />
       <module name="service-passenger-user" options="-parameters" />
       <module name="service-price" options="-parameters" />
+      <module name="service-sse-push" options="-parameters" />
       <module name="service-verificationcode" options="-parameters" />
     </option>
   </component>
