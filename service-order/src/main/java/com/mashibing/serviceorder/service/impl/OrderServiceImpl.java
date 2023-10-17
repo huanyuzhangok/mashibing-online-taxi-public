@@ -111,12 +111,32 @@ public class OrderServiceImpl implements OrderService {
         orderInfo.setGmtModified(now);
         log.info("要插入的数据是" + orderInfo);
         orderMapper.insert(orderInfo);
-        // 派单
-        dispatchRealTimeOrder(orderInfo);
+
+
+        // 定时任务的处理
+        for (int i = 0 ; i < 6; i++){
+            // 派单dispatchRealTimeOrder
+            if (dispatchRealTimeOrder(orderInfo) == 1) {
+                break;
+            }
+
+            // 等待20秒
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return ResponseResult.success();
     }
 
-    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
+    /**
+     * 实时订单派单逻辑
+     * @param orderInfo
+     */
+    public int dispatchRealTimeOrder(OrderInfo orderInfo) {
+        log.info("循环一次");
+        int result = 0;
 
         String depLongitude = orderInfo.getDepLongitude();
         String depLatitude = orderInfo.getDepLatitude();
@@ -230,6 +250,7 @@ public class OrderServiceImpl implements OrderService {
 
                     serviceSsePushClient.push(pushRequest1);
 
+                    result = 1;
 
                     lock.unlock();
                     // 退出不再进行司机的查找
@@ -237,6 +258,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
+        return result;
     }
 
     private boolean priceRuleIsNew(OrderRequest orderRequest) {
@@ -257,6 +279,11 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
+    /**
+     * 判断计价规则是否存在
+     * @param orderRequest
+     * @return
+     */
     private boolean isPriceRuleExists(OrderRequest orderRequest) {
         String fareType = orderRequest.getFareType();
         String cityCode = fareType.substring(0, fareType.indexOf("$"));
@@ -268,6 +295,11 @@ public class OrderServiceImpl implements OrderService {
         return booleanResponseResult.getData();
     }
 
+    /**
+     * 判断是否是黑名单信息
+     * @param orderRequest
+     * @return
+     */
     private boolean isBlackDevice(OrderRequest orderRequest) {
 
         // 需要判断下单的设备是否是黑名单的设备
@@ -294,7 +326,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断乘客是否有业务中的订单
-     *
      * @param passengerId
      * @return
      */
@@ -317,7 +348,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断司机是否有业务中的订单
-     *
      * @param driverId
      * @return
      */
