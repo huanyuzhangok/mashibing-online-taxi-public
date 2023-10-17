@@ -19,4 +19,6 @@ public interface OrderService{
     ResponseResult add(@RequestBody OrderRequest orderRequest);
 
     ResponseResult toPickUpPassenger(OrderRequest orderRequest);
+
+    ResponseResult arriveDeparture(OrderRequest orderRequest);
 }

@@ -22,6 +22,7 @@ import com.mashibing.serviceorder.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.aspectj.weaver.ast.Or;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -381,6 +382,7 @@ public class OrderServiceImpl implements OrderService {
      * @param orderRequest
      * @return
      */
+    @Override
     public ResponseResult toPickUpPassenger(OrderRequest orderRequest){
         Long orderId = orderRequest.getOrderId();
         LocalDateTime toPickUpPassengerTime = orderRequest.getToPickUpPassengerTime();
@@ -395,6 +397,23 @@ public class OrderServiceImpl implements OrderService {
         orderInfo.setToPickUpPassengerLongitude(toPickUpPassengerLongitude);
         orderInfo.setToPickUpPassengerTime(LocalDateTime.now());
         orderInfo.setOrderStatus(OrderConstants.DRIVER_TO_PICK_UP_PASSENGER);
+        orderMapper.updateById(orderInfo);
+        return ResponseResult.success();
+    }
+
+    /**
+     * 到达乘客目的地
+     * @param orderRequest
+     * @return
+     */
+    @Override
+    public ResponseResult arriveDeparture(OrderRequest orderRequest) {
+        Long orderId = orderRequest.getOrderId();
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", orderId);
+        OrderInfo orderInfo = orderMapper.selectOne(queryWrapper);
+        orderInfo.setOrderStatus(OrderConstants.DRIVER_ARRIVED_DEPARTURE);
+        orderInfo.setDriverArrivedDepartureTime(LocalDateTime.now());
         orderMapper.updateById(orderInfo);
         return ResponseResult.success();
     }
