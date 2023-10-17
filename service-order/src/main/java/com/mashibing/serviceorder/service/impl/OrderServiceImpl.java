@@ -205,6 +205,32 @@ public class OrderServiceImpl implements OrderService {
                     pushRequest.setContent(driverContent.toString());
                     serviceSsePushClient.push(pushRequest);
 
+
+                    // 通知乘客
+                    // 通知乘客
+                    JSONObject passengerContent = new  JSONObject();
+                    passengerContent.put("orderId",orderInfo.getId());
+                    passengerContent.put("driverId",orderInfo.getDriverId());
+                    passengerContent.put("driverPhone",orderInfo.getDriverPhone());
+                    passengerContent.put("vehicleNo",orderInfo.getVehicleNo());
+                    // 车辆信息，调用车辆服务
+                    ResponseResult<Car> carById = serviceDriverUserClient.getCarById(carId);
+                    Car carRemote = carById.getData();
+
+                    passengerContent.put("brand", carRemote.getBrand());
+                    passengerContent.put("model",carRemote.getModel());
+                    passengerContent.put("vehicleColor",carRemote.getVehicleColor());
+                    passengerContent.put("receiveOrderCarLongitude",orderInfo.getReceiveOrderCarLongitude());
+                    passengerContent.put("receiveOrderCarLatitude",orderInfo.getReceiveOrderCarLatitude());
+
+                    PushRequest pushRequest1 = new PushRequest();
+                    pushRequest1.setUserId(orderInfo.getPassengerId());
+                    pushRequest1.setIdentity(IdentityConstants.PASSENGER_IDENTITY);
+                    pushRequest1.setContent(passengerContent.toString());
+
+                    serviceSsePushClient.push(pushRequest1);
+
+
                     lock.unlock();
                     // 退出不再进行司机的查找
                     break radius;
