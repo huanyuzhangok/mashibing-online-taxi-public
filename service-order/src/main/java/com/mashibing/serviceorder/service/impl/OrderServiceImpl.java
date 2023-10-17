@@ -402,7 +402,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 到达乘客目的地
+     * 司机到达乘客上车点
      * @param orderRequest
      * @return
      */
@@ -415,6 +415,28 @@ public class OrderServiceImpl implements OrderService {
         orderInfo.setOrderStatus(OrderConstants.DRIVER_ARRIVED_DEPARTURE);
         orderInfo.setDriverArrivedDepartureTime(LocalDateTime.now());
         orderMapper.updateById(orderInfo);
+        return ResponseResult.success();
+    }
+
+    /**
+     * 司机接到乘客
+     * @param orderRequest
+     * @return
+     */
+    @Override
+    public ResponseResult pickUpPassenger(OrderRequest orderRequest) {
+        Long orderId = orderRequest.getOrderId();
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", orderId);
+
+        OrderInfo orderInfo = orderMapper.selectOne(queryWrapper);
+        orderInfo.setPickUpPassengerLongitude(orderRequest.getPickUpPassengerLongitude());
+        orderInfo.setPickUpPassengerLatitude(orderRequest.getPickUpPassengerLatitude());
+        orderInfo.setPickUpPassengerTime(LocalDateTime.now());
+        orderInfo.setOrderStatus(OrderConstants.PICK_UP_PASSENGER);
+
+        orderMapper.updateById(orderInfo);
+
         return ResponseResult.success();
     }
 

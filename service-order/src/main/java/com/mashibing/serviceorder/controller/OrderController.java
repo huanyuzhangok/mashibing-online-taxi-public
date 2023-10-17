@@ -46,19 +46,13 @@ public class OrderController {
      * @param orderRequest
      * @return
      */
-    @PostMapping("/pick-up-passenger")
+    @PostMapping("/to-pick-up-passenger")
     public ResponseResult changeStatus(@RequestBody OrderRequest orderRequest){
-
-//        "pickUpPassengerLongitude": "",
-//                "pickUpPassengerLatitude": "",
-//                "passengerGetoffLongitude": "",
-//                "passengerGetoffLatitude": "",
-//                "vehicleType": ""
         return orderService.toPickUpPassenger(orderRequest);
     }
 
     /**
-     * 到达乘客目的地
+     * 司机到达乘客上车点
      * @return
      */
     @PostMapping("/arrived-departure")
@@ -66,8 +60,21 @@ public class OrderController {
         return orderService.arriveDeparture(orderRequest);
     }
 
+    /**
+     * 司机接到乘客
+     * @return
+     */
+    @PostMapping("/pick-up-passenger")
+    public ResponseResult pickUpPassenger(@RequestBody OrderRequest orderRequest){
+        return orderService.pickUpPassenger(orderRequest);
+    }
+
     @GetMapping("/testMapper")
     public String testMapper(){
         return orderService.testMapper();
     }
+
+//    "passengerGetoffLongitude": "116.40",
+//            "passengerGetoffLatitude": "39.91",
+//            "vehicleType": ""
 }
