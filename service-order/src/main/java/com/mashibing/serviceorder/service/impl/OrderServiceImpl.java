@@ -2,12 +2,14 @@ package com.mashibing.serviceorder.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.common.constant.CommonStatusEnum;
+import com.mashibing.common.constant.IdentityConstants;
 import com.mashibing.common.constant.OrderConstants;
 import com.mashibing.common.dto.Car;
 import com.mashibing.common.dto.PriceRule;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import com.mashibing.common.dto.OrderInfo;
+import com.mashibing.common.request.PushRequest;
 import com.mashibing.common.response.OrderDriverResponse;
 import com.mashibing.common.response.TerminalResponse;
 import com.mashibing.common.util.RedisPrefixUtils;
@@ -15,6 +17,7 @@ import com.mashibing.serviceorder.mapper.OrderMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
 import com.mashibing.serviceorder.remote.ServiceMapClient;
 import com.mashibing.serviceorder.remote.ServicePriceClient;
+import com.mashibing.serviceorder.remote.ServiceSsePushClient;
 import com.mashibing.serviceorder.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
@@ -60,6 +63,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private ServiceSsePushClient serviceSsePushClient;
 
     @Override
     public String testMapper() {
@@ -179,17 +185,31 @@ public class OrderServiceImpl implements OrderService {
 
                     orderMapper.updateById(orderInfo);
 
+                    // 通知司机
+                    JSONObject driverContent = new  JSONObject();
+
+                    driverContent.put("orderId",orderInfo.getId());
+                    driverContent.put("passengerId",orderInfo.getPassengerId());
+                    driverContent.put("passengerPhone",orderInfo.getPassengerPhone());
+                    driverContent.put("departure",orderInfo.getDeparture());
+                    driverContent.put("depLongitude",orderInfo.getDepLongitude());
+                    driverContent.put("depLatitude",orderInfo.getDepLatitude());
+
+                    driverContent.put("destination",orderInfo.getDestination());
+                    driverContent.put("destLongitude",orderInfo.getDestLongitude());
+                    driverContent.put("destLatitude",orderInfo.getDestLatitude());
+
+                    PushRequest pushRequest = new PushRequest();
+                    pushRequest.setUserId(driverId);
+                    pushRequest.setIdentity(IdentityConstants.DRIVER_IDENTITY);
+                    pushRequest.setContent(driverContent.toString());
+                    serviceSsePushClient.push(pushRequest);
+
                     lock.unlock();
                     // 退出不再进行司机的查找
                     break radius;
                 }
             }
-
-            // 根据解析出来的终端，查询车辆
-
-            // 找到符合的车辆进行派单
-
-            // 如果派单成功退出循环
         }
     }
 

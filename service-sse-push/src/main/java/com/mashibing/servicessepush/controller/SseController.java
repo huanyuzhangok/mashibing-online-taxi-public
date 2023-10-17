@@ -53,6 +53,7 @@ public class SseController {
         String identity = pushRequest.getIdentity();
         String content = pushRequest.getContent();
         log.info("用户ID："+userId+",身份："+identity);
+        log.info("conent是" + content);
         String sseMapKey = SsePrefixUtils.generatorSseKey(userId,identity);
         try {
             if (sseEmitterMap.containsKey(sseMapKey)){

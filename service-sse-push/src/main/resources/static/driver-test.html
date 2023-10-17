@@ -4,7 +4,7 @@
 </head>
 
 <body>
-<h1>司机：监听测试页面-模拟监听客户端</h1>
+<h1>司机1：监听测试页面-模拟监听客户端</h1>
 <button onclick="setMessageContent('鼠标点我了')">测试message展示</button>
 <div id="message">展示服务的推送过来消息的地方</br></div>
 
@@ -18,7 +18,6 @@
     if(window.EventSource){
         console.info("此浏览器支持SSE");
         // 连接的建立
-        console.info("传送的url是" + "http://localhost:9000/connect?userId="+userId+"&identity="+identity);
         source = new EventSource("http://localhost:9000/connect?userId="+userId+"&identity="+identity);
 
         // 监听服务的推送的消息
@@ -35,7 +34,6 @@
 
     function setMessageContent(content){
         document.getElementById("message").innerHTML+= (content+'</br>');
-        source = new EventSource("http://localhost:9000/connect?userId="+userId+"&identity="+identity);
     }
 
     function sourceClose(){
