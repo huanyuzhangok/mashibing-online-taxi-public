@@ -19,6 +19,8 @@ import com.mashibing.serviceorder.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -55,6 +57,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public String testMapper() {
@@ -105,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         return ResponseResult.success();
     }
 
-    public synchronized void dispatchRealTimeOrder(OrderInfo orderInfo) {
+    public void dispatchRealTimeOrder(OrderInfo orderInfo) {
 
         String depLongitude = orderInfo.getDepLongitude();
         String depLatitude = orderInfo.getDepLatitude();
@@ -142,8 +147,14 @@ public class OrderServiceImpl implements OrderService {
                     String driverPhone = carData.getDriverPhone();
                     String licenseId = carData.getLicenseId();
                     String vehicleNo = carData.getVehicleNo();
+
+                    String lockKey = (driverId + "").intern();
+                    RLock lock = redissonClient.getLock(lockKey);
+                    lock.lock();
+
                     // 判断司机当前是否有订单
                     if (isDriverOrderGoingOn(driverId) > 0) {
+                        lock.unlock();
                         continue;
                     }
 
@@ -168,7 +179,7 @@ public class OrderServiceImpl implements OrderService {
 
                     orderMapper.updateById(orderInfo);
 
-
+                    lock.unlock();
                     // 退出不再进行司机的查找
                     break radius;
                 }
