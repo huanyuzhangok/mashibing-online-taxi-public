@@ -1,12 +1,12 @@
 package com.mashibing.apipassenger.controller;
 
 import com.mashibing.apipassenger.Service.TokenService;
+import com.mashibing.apipassenger.remote.ServiceOrderClient;
+import com.mashibing.common.dto.OrderInfo;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @className: TokenController

@@ -6,6 +6,7 @@ import com.mashibing.serviceorder.mapper.OrderMapper;
 import com.mashibing.serviceorder.service.OrderService;
 import com.mashibing.serviceorder.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,9 @@ public class TestController {
     @Autowired
     OrderMapper orderMapper;
 
+    @Value("${server.port}")
+    String port;
+
     /**
      * 测试派单逻辑
      * @param orderId
@@ -38,7 +42,7 @@ public class TestController {
      */
     @GetMapping("/test-real-time/{orderId}")
     public String dispatchRealTimeOrder(@PathVariable("orderId") long orderId){
-        System.out.println("并发测试 orderID ： " + orderId);
+        System.out.println("service-order 端口" + port + "并发测试 orderID ： " + orderId);
         OrderInfo orderInfo = orderMapper.selectById(orderId);
         orderService.dispatchRealTimeOrder(orderInfo);
         return "test-real-success";
