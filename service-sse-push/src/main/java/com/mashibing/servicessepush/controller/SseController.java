@@ -1,4 +1,4 @@
-package com.mashibing.ssedriverclientweb.controller;
+package com.mashibing.servicessepush.controller;
 
 import com.mashibing.common.request.PushRequest;
 import com.mashibing.common.util.SsePrefixUtils;
