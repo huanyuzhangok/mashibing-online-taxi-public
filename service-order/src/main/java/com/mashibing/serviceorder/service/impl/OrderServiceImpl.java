@@ -124,13 +124,12 @@ public class OrderServiceImpl implements OrderService {
             // 获得终端  [{"carId":1578641048288702465,"tid":"584169988"}]
 
             // 解析终端
-            JSONArray result = JSONArray.fromObject(listResponseResult.getData());
-            for (int j = 0; j < result.size(); j++) {
-                JSONObject jsonObject = result.getJSONObject(j);
-                String carIdString = jsonObject.getString("carId");
-                long carId = Long.parseLong(carIdString);
-                String longitude = jsonObject.getString("longitude");
-                String latitude = jsonObject.getString("latitude");
+            List<TerminalResponse> data = listResponseResult.getData();
+            for (int j = 0; j < data.size(); j++) {
+                TerminalResponse terminalResponse = data.get(j);
+                Long carId = terminalResponse.getCarId();
+                String longitude = terminalResponse.getLongitude();
+                String latitude = terminalResponse.getLatitude();
                 // 查询是否有对应的可派单司机
                 ResponseResult<OrderDriverResponse> availableDriver = serviceDriverUserClient.getAvailableDriver(carId);
                 if (availableDriver.getCode() == CommonStatusEnum.AVAILABLE_DRIVER_EMPTY.getCode()) {
@@ -138,11 +137,11 @@ public class OrderServiceImpl implements OrderService {
                     continue;
                 } else {
                     log.info("找到了正在出车的司机，车辆Id" + carId);
-                    OrderDriverResponse data = availableDriver.getData();
-                    Long driverId = data.getDriverId();
-                    String driverPhone = data.getDriverPhone();
-                    String licenseId = data.getLicenseId();
-                    String vehicleNo = data.getVehicleNo();
+                    OrderDriverResponse carData = availableDriver.getData();
+                    Long driverId = carData.getDriverId();
+                    String driverPhone = carData.getDriverPhone();
+                    String licenseId = carData.getLicenseId();
+                    String vehicleNo = carData.getVehicleNo();
                     // 判断司机当前是否有订单
                     if (isDriverOrderGoingOn(driverId) > 0) {
                         continue;
