@@ -33,4 +33,9 @@ public class ApiDriverOrderInfoServiceImpl implements ApiDriverOrderInfoService 
     public ResponseResult pickUpPassenger(OrderRequest orderRequest) {
         return serviceOrderClient.pickUpPassenger(orderRequest);
     }
+
+    @Override
+    public ResponseResult passengerGetoff(OrderRequest orderRequest) {
+        return serviceOrderClient.passengerGetoff(orderRequest);
+    }
 }

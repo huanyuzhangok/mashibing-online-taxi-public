@@ -271,6 +271,11 @@ public class OrderServiceImpl implements OrderService {
         return result;
     }
 
+    /**
+     * 判断计价规则是否最新
+     * @param orderRequest
+     * @return
+     */
     private boolean priceRuleIsNew(OrderRequest orderRequest) {
         log.info("传递的orderRequest是" + orderRequest);
         ResponseResult<Boolean> isNew = servicePriceClient.isNew(orderRequest.getFareType(), orderRequest.getFareVersion());
