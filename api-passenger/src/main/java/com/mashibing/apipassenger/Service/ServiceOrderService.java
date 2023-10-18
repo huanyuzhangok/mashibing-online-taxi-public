@@ -12,4 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  **/
 public interface ServiceOrderService {
     public ResponseResult add(@RequestBody OrderRequest orderRequest);
+
+    ResponseResult cancel(Long orderId);
 }

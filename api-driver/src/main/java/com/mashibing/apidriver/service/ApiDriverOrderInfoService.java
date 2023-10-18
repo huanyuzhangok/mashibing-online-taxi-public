@@ -17,4 +17,6 @@ public interface ApiDriverOrderInfoService {
     ResponseResult pickUpPassenger(OrderRequest orderRequest);
 
     ResponseResult passengerGetoff(OrderRequest orderRequest);
+
+    ResponseResult cancel(Long orderId);
 }

@@ -4,10 +4,7 @@ import com.mashibing.apipassenger.Service.ServiceOrderService;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @className: OrderController
@@ -31,5 +28,15 @@ public class OrderController {
     public ResponseResult add(@RequestBody OrderRequest orderRequest){
         System.out.println(orderRequest);
         return orderService.add(orderRequest);
+    }
+
+    /**
+     * 乘客取消订单
+     * @param orderId
+     * @return
+     */
+    @PostMapping("/cancel")
+    public ResponseResult cancel(@RequestParam Long orderId){
+        return orderService.cancel(orderId);
     }
 }

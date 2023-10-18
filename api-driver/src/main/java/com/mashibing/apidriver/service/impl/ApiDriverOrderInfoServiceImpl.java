@@ -2,6 +2,7 @@ package com.mashibing.apidriver.service.impl;
 
 import com.mashibing.apidriver.remote.ServiceOrderClient;
 import com.mashibing.apidriver.service.ApiDriverOrderInfoService;
+import com.mashibing.common.constant.IdentityConstants;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,10 @@ public class ApiDriverOrderInfoServiceImpl implements ApiDriverOrderInfoService 
     @Override
     public ResponseResult passengerGetoff(OrderRequest orderRequest) {
         return serviceOrderClient.passengerGetoff(orderRequest);
+    }
+
+    @Override
+    public ResponseResult cancel(Long orderId) {
+        return  serviceOrderClient.cancel(orderId, IdentityConstants.DRIVER_IDENTITY);
     }
 }
