@@ -25,4 +25,6 @@ public interface OrderService{
     ResponseResult pickUpPassenger(OrderRequest orderRequest);
 
     ResponseResult passengerGetoff(OrderRequest orderRequest);
+
+    ResponseResult pay(OrderRequest orderRequest);
 }

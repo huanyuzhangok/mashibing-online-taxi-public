@@ -519,4 +519,19 @@ public class OrderServiceImpl implements OrderService {
         return ResponseResult.success();
     }
 
+    /**
+     * 支付
+     * @param orderRequest
+     * @return
+     */
+    @Override
+    public ResponseResult pay(OrderRequest orderRequest) {
+        Long orderId = orderRequest.getOrderId();
+        OrderInfo orderInfo = orderMapper.selectById(orderId);
+
+        orderInfo.setOrderStatus(OrderConstants.SUCCESS_PAY);
+        orderMapper.updateById(orderInfo);
+        return ResponseResult.success();
+    }
+
 }

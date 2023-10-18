@@ -15,8 +15,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-public class TestAlipayApplication {
+public class ServicePayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TestAlipayApplication.class);
+        SpringApplication.run(ServicePayApplication.class);
     }
 }
