@@ -13,4 +13,6 @@ public interface ApiDriverOrderInfoService {
     ResponseResult toPickUpPassenger(OrderRequest orderRequest);
 
     ResponseResult arrivedDeparture(OrderRequest orderRequest);
+
+    ResponseResult pickUpPassenger(OrderRequest orderRequest);
 }
