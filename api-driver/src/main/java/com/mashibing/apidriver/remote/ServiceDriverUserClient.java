@@ -1,9 +1,6 @@
 package com.mashibing.apidriver.remote;
 
-import com.mashibing.common.dto.Car;
-import com.mashibing.common.dto.DriverUser;
-import com.mashibing.common.dto.DriverUserWorkStatus;
-import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.dto.*;
 import com.mashibing.common.response.DriverUserExistsResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -29,4 +26,7 @@ public interface ServiceDriverUserClient {
 
     @RequestMapping(method = RequestMethod.POST, value="/driver-user-work-status")
     public ResponseResult changeWorkStatus(@RequestBody DriverUserWorkStatus driverUserWorkStatus);
+
+    @GetMapping("/driver-car-binding-relationship")
+    public ResponseResult<DriverCarBindingRelationship> getDriverCarRelationShip(@RequestParam String driverPhone);
 }

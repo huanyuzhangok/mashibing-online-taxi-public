@@ -16,4 +16,6 @@ public interface DriverCarBindingRelationshipService {
     public ResponseResult bind(DriverCarBindingRelationship driverCarBindingRelationship);
 
     ResponseResult unbind(DriverCarBindingRelationship driverCarBindingRelationship);
+
+    ResponseResult<DriverCarBindingRelationship> getDriverCarRelationShipByDriverPhone(String driverPhone);
 }

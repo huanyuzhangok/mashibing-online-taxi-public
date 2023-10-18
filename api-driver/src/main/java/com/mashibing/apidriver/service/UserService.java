@@ -15,4 +15,6 @@ public interface UserService {
     public ResponseResult updateUser(@RequestBody DriverUser driverUser);
 
     ResponseResult changeWorkStatus(DriverUserWorkStatus driverUserWorkStatus);
+
+    ResponseResult getDriverCarBindingRelationship(String driverPhone);
 }

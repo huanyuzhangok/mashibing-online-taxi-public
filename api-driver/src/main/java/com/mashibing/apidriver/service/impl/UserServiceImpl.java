@@ -29,4 +29,10 @@ public class UserServiceImpl implements UserService {
     public ResponseResult changeWorkStatus(DriverUserWorkStatus driverUserWorkStatus){
         return serviceDriverUserClient.changeWorkStatus(driverUserWorkStatus);
     }
+
+    @Override
+    public ResponseResult getDriverCarBindingRelationship(String driverPhone) {
+        // 根据driverPhone查询司机信息
+        return serviceDriverUserClient.getDriverCarRelationShip(driverPhone);
+    }
 }

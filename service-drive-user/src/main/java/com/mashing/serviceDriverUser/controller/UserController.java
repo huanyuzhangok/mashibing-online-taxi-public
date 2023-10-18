@@ -1,10 +1,12 @@
 package com.mashing.serviceDriverUser.controller;
 
 import com.mashibing.common.constant.DriverCarConstants;
+import com.mashibing.common.dto.DriverCarBindingRelationship;
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.DriverUserExistsResponse;
 import com.mashibing.common.response.OrderDriverResponse;
+import com.mashing.serviceDriverUser.service.DriverCarBindingRelationshipService;
 import com.mashing.serviceDriverUser.service.DriverUserService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -25,6 +27,9 @@ public class UserController {
 
     @Autowired
     private DriverUserService driverUserService;
+
+    @Autowired
+    private DriverCarBindingRelationshipService driverCarBindingRelationshipService;
 
     /**
      * 添加司机信息
@@ -76,5 +81,15 @@ public class UserController {
     public ResponseResult<OrderDriverResponse> getAvailableDriver(@PathVariable("carId") Long carId){
         log.info("获取到的carId是" + carId);
         return driverUserService.getAvailableDriver(carId);
+    }
+
+    /**
+     * 根据司机手机号查询司机和车辆绑定关系
+     * @param driverPhone
+     * @return
+     */
+    @GetMapping("/driver-car-binding-relationship")
+    public ResponseResult<DriverCarBindingRelationship> getDriverCarRelationShip(@RequestParam String driverPhone){
+        return driverCarBindingRelationshipService.getDriverCarRelationShipByDriverPhone(driverPhone);
     }
 }

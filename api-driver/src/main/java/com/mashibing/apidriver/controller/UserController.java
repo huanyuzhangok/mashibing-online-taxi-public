@@ -4,11 +4,12 @@ import com.mashibing.apidriver.service.UserService;
 import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.DriverUserWorkStatus;
 import com.mashibing.common.dto.ResponseResult;
+import com.mashibing.common.dto.TokenResult;
+import com.mashibing.common.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @className: UserController
@@ -38,5 +39,21 @@ public class UserController {
     public ResponseResult changeWorkStatus(@RequestBody DriverUserWorkStatus driverUserWorkStatus){
 
         return userService.changeWorkStatus(driverUserWorkStatus);
+    }
+
+    /**
+     * 根据司机token查询 司机和车辆绑定关系
+     * @param request
+     * @return
+     */
+    @GetMapping("/driver-car-binding-relationship")
+    public ResponseResult getDriverCarBindingRelationship(HttpServletRequest request){
+
+        String authorization = request.getHeader("Authorization");
+        TokenResult tokenResult = JwtUtils.checkToken(authorization);
+        String driverPhone = tokenResult.getPhone();
+
+        return userService.getDriverCarBindingRelationship(driverPhone);
+
     }
 }

@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.common.constant.CommonStatusEnum;
 import com.mashibing.common.constant.DriverCarConstants;
 import com.mashibing.common.dto.DriverCarBindingRelationship;
+import com.mashibing.common.dto.DriverUser;
 import com.mashibing.common.dto.ResponseResult;
 import com.mashing.serviceDriverUser.mapper.DriverCarBindingRelationshipMapper;
+import com.mashing.serviceDriverUser.mapper.DriverUserMapper;
 import com.mashing.serviceDriverUser.service.DriverCarBindingRelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class DriverCarBindingRelationshipServiceImpl implements DriverCarBinding
 
     @Autowired
     private DriverCarBindingRelationshipMapper driverCarBindingRelationshipMapper;
+
+    @Autowired
+    private DriverUserMapper driverUserMapper;
 
     public ResponseResult bind(DriverCarBindingRelationship driverCarBindingRelationship){
 
@@ -85,5 +90,21 @@ public class DriverCarBindingRelationshipServiceImpl implements DriverCarBinding
         relationship.setUnBindingTime(now);
         driverCarBindingRelationshipMapper.updateById(relationship);
         return ResponseResult.success();
+    }
+
+    @Override
+    public ResponseResult<DriverCarBindingRelationship> getDriverCarRelationShipByDriverPhone(String driverPhone) {
+        QueryWrapper<DriverUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("driver_phone",driverPhone);
+
+        DriverUser driverUser = driverUserMapper.selectOne(queryWrapper);
+        Long driverId = driverUser.getId();
+
+        QueryWrapper<DriverCarBindingRelationship> driverCarBindingRelationshipQueryWrapper = new QueryWrapper<>();
+        driverCarBindingRelationshipQueryWrapper.eq("driver_id",driverId);
+        driverCarBindingRelationshipQueryWrapper.eq("bind_state",DriverCarConstants.DRIVER_CAR_BIND);
+
+        DriverCarBindingRelationship driverCarBindingRelationship = driverCarBindingRelationshipMapper.selectOne(driverCarBindingRelationshipQueryWrapper);
+        return ResponseResult.success(driverCarBindingRelationship);
     }
 }
