@@ -27,4 +27,6 @@ public interface OrderService{
     ResponseResult passengerGetoff(OrderRequest orderRequest);
 
     ResponseResult pay(OrderRequest orderRequest);
+
+    ResponseResult cancel(Long orderId, String identity);
 }
