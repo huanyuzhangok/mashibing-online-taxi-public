@@ -11,4 +11,6 @@ import com.mashibing.common.request.OrderRequest;
  **/
 public interface ApiDriverOrderInfoService {
     ResponseResult toPickUpPassenger(OrderRequest orderRequest);
+
+    ResponseResult arrivedDeparture(OrderRequest orderRequest);
 }
