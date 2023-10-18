@@ -130,12 +130,19 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
 
-            // 等待20秒
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (i == 5){
+                // 订单无效
+                orderInfo.setOrderStatus(OrderConstants.ORDER_INVALID);
+                orderMapper.updateById(orderInfo);
+            }else {
+                // 等待20秒
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
+
         }
         return ResponseResult.success();
     }
@@ -312,7 +319,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断计价规则是否存在
-     *
      * @param orderRequest
      * @return
      */

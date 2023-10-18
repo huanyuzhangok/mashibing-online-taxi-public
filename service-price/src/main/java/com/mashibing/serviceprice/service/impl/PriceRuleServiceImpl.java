@@ -100,6 +100,7 @@ public class PriceRuleServiceImpl implements PriceRuleService {
 
     @Override
     public ResponseResult<Boolean> getIsNew(String fareType, Integer fareVersion) {
+        System.out.println("传送过来的参数是 fareType : " + fareType + "    fareVersion: " + fareVersion);
         ResponseResult<PriceRule> newestVersionPriceRule = getNewestVersion(fareType);
         if (newestVersionPriceRule.getCode() == CommonStatusEnum.PRICE_RULE_EMPTY.getCode()){
             return ResponseResult.fail(CommonStatusEnum.PRICE_RULE_EMPTY.getCode(),CommonStatusEnum.PRICE_RULE_EMPTY.getValue());
