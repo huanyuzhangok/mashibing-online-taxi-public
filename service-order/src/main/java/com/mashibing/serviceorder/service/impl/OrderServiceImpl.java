@@ -499,8 +499,12 @@ public class OrderServiceImpl implements OrderService {
         Long driveMile = data.getDriveMile();
         Long driveTime = data.getDriveTime();
 
-        orderInfo.setDriveMile(data.getDriveMile());
-        orderInfo.setDriveTime(data.getDriveTime());
+//        Long driveMile = Long.valueOf(10781);
+//        Long driveTime = Long.valueOf(284);
+
+
+        orderInfo.setDriveMile(driveMile);
+        orderInfo.setDriveTime(driveTime);
 
         // 计算获取价格
         String address = orderInfo.getAddress();
@@ -508,6 +512,8 @@ public class OrderServiceImpl implements OrderService {
         ResponseResult<Double> doubleResponseResult = servicePriceClient.calculatePrice(driveMile.intValue(), driveTime.intValue(), address, vehicleType);
         Double price = doubleResponseResult.getData();
         orderInfo.setPrice(price);
+
+        log.info("最终的订单信息是" + orderInfo);
 
         orderMapper.updateById(orderInfo);
         return ResponseResult.success();
