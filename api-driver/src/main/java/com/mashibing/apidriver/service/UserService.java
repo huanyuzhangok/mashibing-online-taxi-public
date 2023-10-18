@@ -1,6 +1,7 @@
 package com.mashibing.apidriver.service;
 
 import com.mashibing.common.dto.DriverUser;
+import com.mashibing.common.dto.DriverUserWorkStatus;
 import com.mashibing.common.dto.ResponseResult;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -12,4 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  **/
 public interface UserService {
     public ResponseResult updateUser(@RequestBody DriverUser driverUser);
+
+    ResponseResult changeWorkStatus(DriverUserWorkStatus driverUserWorkStatus);
 }
