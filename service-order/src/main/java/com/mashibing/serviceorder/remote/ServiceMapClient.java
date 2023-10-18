@@ -2,6 +2,7 @@ package com.mashibing.serviceorder.remote;
 
 import com.mashibing.common.dto.ResponseResult;
 import com.mashibing.common.response.TerminalResponse;
+import com.mashibing.common.response.TrsearchResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,4 +22,7 @@ public interface ServiceMapClient {
 
     @RequestMapping(method = RequestMethod.POST,value = "/terminal/aroundsearch")
     public ResponseResult<List<TerminalResponse>> terminalAroundSearch(@RequestParam String center , @RequestParam Integer radius);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/terminal/trsearch")
+    public ResponseResult<TrsearchResponse> trsearch(@RequestParam String tid, @RequestParam Long starttime, @RequestParam Long endtime);
 }

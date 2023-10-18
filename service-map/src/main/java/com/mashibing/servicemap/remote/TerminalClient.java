@@ -153,7 +153,7 @@ public class TerminalClient {
             return null;
         }
 
-        
+
         JSONArray tracks = data.getJSONArray("tracks");
         long driveMile = 0L;
         long driveTime = 0L;

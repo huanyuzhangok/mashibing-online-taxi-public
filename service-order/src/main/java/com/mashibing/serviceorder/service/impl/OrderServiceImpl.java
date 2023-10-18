@@ -12,6 +12,7 @@ import com.mashibing.common.dto.OrderInfo;
 import com.mashibing.common.request.PushRequest;
 import com.mashibing.common.response.OrderDriverResponse;
 import com.mashibing.common.response.TerminalResponse;
+import com.mashibing.common.response.TrsearchResponse;
 import com.mashibing.common.util.RedisPrefixUtils;
 import com.mashibing.serviceorder.mapper.OrderMapper;
 import com.mashibing.serviceorder.remote.ServiceDriverUserClient;
@@ -31,6 +32,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -75,6 +77,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 新建订单
+     *
      * @param orderRequest
      * @return
      */
@@ -120,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 定时任务的处理
-        for (int i = 0 ; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             // 派单dispatchRealTimeOrder
             if (dispatchRealTimeOrder(orderInfo) == 1) {
                 break;
@@ -138,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 实时订单派单逻辑
+     *
      * @param orderInfo
      */
     public int dispatchRealTimeOrder(OrderInfo orderInfo) {
@@ -193,7 +197,7 @@ public class OrderServiceImpl implements OrderService {
                     // 订单直接匹配司机
                     // 查询当前车辆信息
                     QueryWrapper<Car> carQueryWrapper = new QueryWrapper<>();
-                    carQueryWrapper.eq("id",carId);
+                    carQueryWrapper.eq("id", carId);
 
 
                     // 设置订单中和司机车辆相关的信息
@@ -212,18 +216,18 @@ public class OrderServiceImpl implements OrderService {
                     orderMapper.updateById(orderInfo);
 
                     // 通知司机
-                    JSONObject driverContent = new  JSONObject();
+                    JSONObject driverContent = new JSONObject();
 
-                    driverContent.put("orderId",orderInfo.getId());
-                    driverContent.put("passengerId",orderInfo.getPassengerId());
-                    driverContent.put("passengerPhone",orderInfo.getPassengerPhone());
-                    driverContent.put("departure",orderInfo.getDeparture());
-                    driverContent.put("depLongitude",orderInfo.getDepLongitude());
-                    driverContent.put("depLatitude",orderInfo.getDepLatitude());
+                    driverContent.put("orderId", orderInfo.getId());
+                    driverContent.put("passengerId", orderInfo.getPassengerId());
+                    driverContent.put("passengerPhone", orderInfo.getPassengerPhone());
+                    driverContent.put("departure", orderInfo.getDeparture());
+                    driverContent.put("depLongitude", orderInfo.getDepLongitude());
+                    driverContent.put("depLatitude", orderInfo.getDepLatitude());
 
-                    driverContent.put("destination",orderInfo.getDestination());
-                    driverContent.put("destLongitude",orderInfo.getDestLongitude());
-                    driverContent.put("destLatitude",orderInfo.getDestLatitude());
+                    driverContent.put("destination", orderInfo.getDestination());
+                    driverContent.put("destLongitude", orderInfo.getDestLongitude());
+                    driverContent.put("destLatitude", orderInfo.getDestLatitude());
 
                     PushRequest pushRequest = new PushRequest();
                     pushRequest.setUserId(driverId);
@@ -234,20 +238,20 @@ public class OrderServiceImpl implements OrderService {
 
                     // 通知乘客
                     // 通知乘客
-                    JSONObject passengerContent = new  JSONObject();
-                    passengerContent.put("orderId",orderInfo.getId());
-                    passengerContent.put("driverId",orderInfo.getDriverId());
-                    passengerContent.put("driverPhone",orderInfo.getDriverPhone());
-                    passengerContent.put("vehicleNo",orderInfo.getVehicleNo());
+                    JSONObject passengerContent = new JSONObject();
+                    passengerContent.put("orderId", orderInfo.getId());
+                    passengerContent.put("driverId", orderInfo.getDriverId());
+                    passengerContent.put("driverPhone", orderInfo.getDriverPhone());
+                    passengerContent.put("vehicleNo", orderInfo.getVehicleNo());
                     // 车辆信息，调用车辆服务
                     ResponseResult<Car> carById = serviceDriverUserClient.getCarById(carId);
                     Car carRemote = carById.getData();
 
                     passengerContent.put("brand", carRemote.getBrand());
-                    passengerContent.put("model",carRemote.getModel());
-                    passengerContent.put("vehicleColor",carRemote.getVehicleColor());
-                    passengerContent.put("receiveOrderCarLongitude",orderInfo.getReceiveOrderCarLongitude());
-                    passengerContent.put("receiveOrderCarLatitude",orderInfo.getReceiveOrderCarLatitude());
+                    passengerContent.put("model", carRemote.getModel());
+                    passengerContent.put("vehicleColor", carRemote.getVehicleColor());
+                    passengerContent.put("receiveOrderCarLongitude", orderInfo.getReceiveOrderCarLongitude());
+                    passengerContent.put("receiveOrderCarLatitude", orderInfo.getReceiveOrderCarLatitude());
 
                     PushRequest pushRequest1 = new PushRequest();
                     pushRequest1.setUserId(orderInfo.getPassengerId());
@@ -278,6 +282,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断是否有空闲司机
+     *
      * @param orderRequest
      * @return
      */
@@ -292,6 +297,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断计价规则是否存在
+     *
      * @param orderRequest
      * @return
      */
@@ -308,6 +314,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断是否是黑名单信息
+     *
      * @param orderRequest
      * @return
      */
@@ -337,6 +344,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断乘客是否有业务中的订单
+     *
      * @param passengerId
      * @return
      */
@@ -359,6 +367,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 判断司机是否有业务中的订单
+     *
      * @param driverId
      * @return
      */
@@ -379,11 +388,12 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 去接乘客
+     *
      * @param orderRequest
      * @return
      */
     @Override
-    public ResponseResult toPickUpPassenger(OrderRequest orderRequest){
+    public ResponseResult toPickUpPassenger(OrderRequest orderRequest) {
         Long orderId = orderRequest.getOrderId();
         LocalDateTime toPickUpPassengerTime = orderRequest.getToPickUpPassengerTime();
         String toPickUpPassengerLongitude = orderRequest.getToPickUpPassengerLongitude();
@@ -403,6 +413,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 司机到达乘客上车点
+     *
      * @param orderRequest
      * @return
      */
@@ -420,6 +431,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 司机接到乘客
+     *
      * @param orderRequest
      * @return
      */
@@ -442,6 +454,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 乘客下车到达目的地，行程终止
+     *
      * @param orderRequest
      * @return
      */
@@ -450,7 +463,7 @@ public class OrderServiceImpl implements OrderService {
         Long orderId = orderRequest.getOrderId();
 
         QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",orderId);
+        queryWrapper.eq("id", orderId);
         OrderInfo orderInfo = orderMapper.selectOne(queryWrapper);
 
         orderInfo.setPassengerGetoffTime(LocalDateTime.now());
@@ -459,6 +472,23 @@ public class OrderServiceImpl implements OrderService {
 
         orderInfo.setOrderStatus(OrderConstants.PASSENGER_GETOFF);
         // 订单行驶的路程和时间
+        ResponseResult<Car> carById = serviceDriverUserClient.getCarById(orderInfo.getCarId());
+        Long starttime = orderInfo.getPickUpPassengerTime().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long endtime = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        System.out.println("开始时间：" + starttime);
+        System.out.println("结束时间：" + endtime);
+
+        // 1668078028000l,测试的时候不要跨天
+        ResponseResult<TrsearchResponse> trsearch = serviceMapClient.trsearch(carById.getData().getTid(), starttime, endtime);
+
+        TrsearchResponse data = trsearch.getData();
+        orderInfo.setDriveMile(data.getDriveMile());
+        orderInfo.setDriveTime(data.getDriveTime());
+
+        // 计算获取价格
+//        String address = orderInfo.getAddress();
+//        String vehicleType = orderInfo.getVehicleType();
+//        servicePriceClient.cal
 
         orderMapper.updateById(orderInfo);
         return ResponseResult.success();
