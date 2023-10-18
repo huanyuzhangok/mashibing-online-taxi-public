@@ -183,6 +183,15 @@ public class OrderServiceImpl implements OrderService {
                     String driverPhone = carData.getDriverPhone();
                     String licenseId = carData.getLicenseId();
                     String vehicleNo = carData.getVehicleNo();
+                    String vehicleTypeFromCar = carData.getVehicleType();
+
+                    // 判断车辆的车型是否符合？
+                    String vehicleType = orderInfo.getVehicleType();
+                    if (!vehicleType.trim().equals(vehicleTypeFromCar.trim())){
+                        System.out.println("车型不符合");
+                        continue ;
+                    }
+
 
                     String lockKey = (driverId + "").intern();
                     RLock lock = redissonClient.getLock(lockKey);
@@ -487,13 +496,18 @@ public class OrderServiceImpl implements OrderService {
         ResponseResult<TrsearchResponse> trsearch = serviceMapClient.trsearch(carById.getData().getTid(), starttime, endtime);
 
         TrsearchResponse data = trsearch.getData();
+        Long driveMile = data.getDriveMile();
+        Long driveTime = data.getDriveTime();
+
         orderInfo.setDriveMile(data.getDriveMile());
         orderInfo.setDriveTime(data.getDriveTime());
 
         // 计算获取价格
-//        String address = orderInfo.getAddress();
-//        String vehicleType = orderInfo.getVehicleType();
-//        servicePriceClient.cal
+        String address = orderInfo.getAddress();
+        String vehicleType = orderInfo.getVehicleType();
+        ResponseResult<Double> doubleResponseResult = servicePriceClient.calculatePrice(driveMile.intValue(), driveTime.intValue(), address, vehicleType);
+        Double price = doubleResponseResult.getData();
+        orderInfo.setPrice(price);
 
         orderMapper.updateById(orderInfo);
         return ResponseResult.success();

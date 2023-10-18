@@ -8,6 +8,8 @@ import com.mashibing.common.dto.ResponseResult;
  * @author: huanyuzhang
  * @date: 2023/10/10
  **/
-public interface ForecastPriceService {
+public interface PriceService {
     public ResponseResult forecastPrice(String depLongitude, String depLatitude, String destLongitude, String destLatitude, String cityCode, String vehicleType);
+
+    ResponseResult<Double> calculatePrice(Integer distance, Integer duration, String cityCode, String vehicleType);
 }
