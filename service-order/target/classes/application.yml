@@ -16,13 +16,13 @@ spring:
     database: 0
 
 
----
-spring:
-  profiles: 8089
+#---
+#spring:
+#  profiles: 8089
 server:
-  port: 8089
----
-spring:
-  profiles: 8008
-server:
-  port: 8008
+  port: 8007
+#---
+#spring:
+#  profiles: 8008
+#server:
+#  port: 8008

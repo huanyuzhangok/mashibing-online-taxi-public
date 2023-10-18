@@ -35,9 +35,9 @@ public class PayServiceImpl implements PayService {
         message.put("orderId",orderId);
 
         // 修改订单状态
-//        OrderRequest orderRequest = new OrderRequest();
-//        orderRequest.setOrderId(orderId);
-//        serviceOrderClient.pushPayInfo(orderRequest);
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setOrderId(orderId);
+        serviceOrderClient.pushPayInfo(orderRequest);
 
         // 推送消息
         PushRequest pushRequest = new PushRequest();
